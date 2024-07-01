@@ -1,5 +1,4 @@
-# Flutter Todo App
-
+# Flutter Todo App [TodoMaster (TM)]
 A simple Todo application built with Flutter that integrates with a Django backend. This app includes features like user authentication, task management, profile management, and password management.
 
 ## Features
@@ -13,6 +12,7 @@ A simple Todo application built with Flutter that integrates with a Django backe
 
 - Flutter SDK
 - Dart
+- Andriod Studio
 - Python 3
 - Django
 - Django REST Framework
@@ -23,7 +23,7 @@ A simple Todo application built with Flutter that integrates with a Django backe
 
 1. **Clone the Repository**:
     ```bash
-    git clone https://github.com/yourusername/flutter_todo_django.git
+    git clone https://github.com/Pundit4Real/Todo.git
     cd flutter_todo_django/backend
     ```
 
