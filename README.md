@@ -1,4 +1,4 @@
-# Flutter Todo App [TodoMaster (TM)]
+# Flutter Todo App [ TodoMaster (TM) ]
 A simple Todo application built with Flutter that integrates with a Django backend. This app includes features like user authentication, task management, profile management, and password management.
 
 ## Features
@@ -24,7 +24,6 @@ A simple Todo application built with Flutter that integrates with a Django backe
 1. **Clone the Repository**:
     ```bash
     git clone https://github.com/Pundit4Real/Todo.git
-    cd flutter_todo_django/backend
     ```
 
 2. **Create a Virtual Environment**:
@@ -40,6 +39,9 @@ A simple Todo application built with Flutter that integrates with a Django backe
 
 4. **Run Migrations**:
     ```bash
+    python manage.py makemigrations
+    ```
+    ```bash
     python manage.py migrate
     ```
 
@@ -52,8 +54,8 @@ A simple Todo application built with Flutter that integrates with a Django backe
 
 1. **Clone the Repository**:
     ```bash
-    git clone https://github.com/yourusername/flutter_todo_django.git
-    cd flutter_todo_django/frontend
+    git clone https://github.com/Pundit4Real/Flutter-Todo-App.git
+    cd Flutter-Todo-App/todo_app
     ```
 
 2. **Get Dependencies**:
@@ -69,30 +71,30 @@ A simple Todo application built with Flutter that integrates with a Django backe
 ## API Endpoints
 
 - **Auth URLs**:
-  - `POST /api/register/`: Register a new user
-  - `POST /api/verify-email/`: Verify user email
-  - `POST /api/login/`: User login
-  - `POST /api/change-password/`: Change user password
-  - `POST /api/forgot-password/`: Send password reset email
-  - `POST /api/reset-password/`: Reset user password
+  - `POST /auth/register/`: Register a new user
+  - `POST /auth/verify-email/`: Verify user email
+  - `POST /auth/login/`: User login
+  - `POST /auth/change-password/`: Change user password
+  - `POST /auth/forgot-password/`: Send password reset email
+  - `POST /auth/reset-password/`: Reset user password
 
 - **User Profile URLs**:
-  - `GET /api/profile/`: Get user profile
-  - `PUT /api/update-profile/`: Update user profile
+  - `GET /auth/profile/`: Get user profile
+  - `PUT /auth/update-profile/`: Update user profile
 
 - **Task URLs**:
-  - `GET /api/tasks/`: List all tasks
-  - `POST /api/tasks/`: Create a new task
-  - `GET /api/tasks/{id}/`: Retrieve a task
+  - `GET /todo/tasks/`: List all tasks
+  - `POST /todo/tasks/create/`: Create a new task
+  - `GET /todo/tasks/{id}/`: Retrieve a task
   - `PUT /api/tasks/{id}/`: Update a task
-  - `DELETE /api/tasks/{id}/`: Delete a task
+  - `DELETE /todo/tasks/{id}/delete`: Delete a task
 
 ## Architectural Considerations
 
 ### Backend
 
 1. **Django REST Framework**: 
-   - We utilized Django REST Framework (DRF) to build a robust and scalable API. DRF provides easy serialization, viewsets, and authentication mechanisms.
+   - We utilized Django REST Framework (DRF) to build a robust and scalable API. DRF provides easy serialization, viewsets,genericsViews and authentication mechanisms.
 
 2. **Token-Based Authentication**:
    - Implemented using `rest_framework_simplejwt` to handle user authentication securely through JWT tokens.
