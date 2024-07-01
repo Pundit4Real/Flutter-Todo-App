@@ -139,7 +139,7 @@ static Future<Map<String, dynamic>> loginUser(String email, String password) asy
   // Fetch user profile
   static Future<User> getUserProfile() async {
     final response = await http.get(
-      Uri.parse('$baseUrl/profile/'),
+      Uri.parse('$baseUrl/auth/profile/'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -154,7 +154,7 @@ static Future<Map<String, dynamic>> loginUser(String email, String password) asy
   // Update user profile
   static Future<bool> updateUserProfile(User user) async {
     final response = await http.put(
-      Uri.parse('$baseUrl/profile/'),
+      Uri.parse('$baseUrl/auth/update-profile/'),
       body: jsonEncode({
         'full_name': user.fullName,
         'username': user.username,
