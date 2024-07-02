@@ -139,22 +139,31 @@ A simple Todo application built with Flutter that integrates with a Django backe
 
 ### App Ui [ Screenshots ]
 
-#### Splash Screen                  #### Splash Screen
-
-![Splash Screen](ui/splash.jpg)     ![Splash Screen](ui/splash.jpg)
-#### Splash Screen
-
-
-
-
-![Splash Screen](ui/splash.jpg)
 #### Splash Screen
 
 ![Splash Screen](ui/splash.jpg)
-#### Splash Screen
 
-![Splash Screen](ui/splash.jpg)
-#### Splash Screen
+#### Welcome Screen
+![welcome Screen](ui/welcome.jpg)
 
-![Splash Screen](ui/splash.jpg)
+#### logIn Screen
+![login Screen](ui/logIn.jpg)
+
+#### SignUp Screen
+![signUp Screen](ui/signUp.jpg)
+
+#### Forgot-Password Screen
+![forgot-password Screen](ui/forgot-password.jpg)
+
+#### Reset-Password Screen
+![reset-password Screen](ui/reset-password.jpg)
+
+#### Todo-List Screen
+![Todo-list Screen](ui/list-task.jpg)
+
+#### Todo-Detail Screen
+![todo-detail Screen](ui/task-detail.jpg)
+
+#### Update-Todo Screen
+![update-task Screen](ui/update-task.jpg)
 

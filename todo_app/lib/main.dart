@@ -1,4 +1,3 @@
-// main.dart
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/user.dart';
 import 'package:todo_app/screens/auth/login.dart';
@@ -70,7 +69,8 @@ class TodoApp extends StatelessWidget {
               builder: (context) => EmailVerificationScreen(email: args['email']),
             );
           case '/reset-password':
-            final email = settings.arguments as String;
+            final args = settings.arguments as Map<String, dynamic>;
+            final email = args['email'] as String;
             return MaterialPageRoute(builder: (context) => ResetPasswordScreen(email: email));
           case '/forgot-password':
             return MaterialPageRoute(builder: (context) => ForgotPasswordScreen());

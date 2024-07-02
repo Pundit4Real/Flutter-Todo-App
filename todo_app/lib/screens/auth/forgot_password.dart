@@ -11,6 +11,13 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  bool _isLoading = false;  // Track the loading state
+
+  @override
+  void dispose() {
+    _emailController.dispose();  // Dispose of the controller when the widget is disposed
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +85,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your email';
                           }
+                          final emailRegExp = RegExp(
+                            r'^[^@]+@[^@]+\.[^@]+$',
+                            caseSensitive: false,
+                            multiLine: false,
+                          );
+                          if (!emailRegExp.hasMatch(value)) {
+                            return 'Enter a valid email address';
+                          }
                           return null;
                         },
                       ),
@@ -87,33 +102,45 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () async {
+                          onPressed: _isLoading ? null : () async {
                             if (_formKey.currentState!.validate()) {
-                              bool success = await ApiService.forgotPassword(_emailController.text);
+                              setState(() {
+                                _isLoading = true;  // Set loading state to true
+                              });
+
+                              final email = _emailController.text;
+                              bool success = await ApiService.forgotPassword(email);
+                              setState(() {
+                                _isLoading = false;  // Set loading state to false
+                              });
+
                               if (success) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('Reset code sent to email'),
-                                    backgroundColor: Colors.white70
+                                    backgroundColor: Colors.white70,
                                   ),
                                 );
                                 Navigator.pushNamed(
                                   context,
                                   '/reset-password',
-                                  arguments: {'email': _emailController.text},
+                                  arguments: {'email': email},  // Pass email in a Map
                                 );
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('Failed to send reset code'),
-                                    backgroundColor: Colors.blue,
-
+                                    backgroundColor: Colors.red,  // Changed to red for error
                                   ),
                                 );
                               }
                             }
                           },
-                          child: const Text('Send Reset Code'),
+                          child: _isLoading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
+                              : const Text('Send Reset Code'),
                         ),
                       ),
                       const SizedBox(

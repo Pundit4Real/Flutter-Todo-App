@@ -1,4 +1,3 @@
-// screens/reset_password_screen.dart
 import 'package:flutter/material.dart';
 import 'package:todo_app/services/api_service.dart';
 import 'package:todo_app/widgets/custom_scaffold.dart';
@@ -17,6 +16,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _resetCodeController = TextEditingController();
   final _newPasswordController = TextEditingController();
+  bool _isLoading = false; // Track the loading state
+
+  @override
+  void dispose() {
+    _resetCodeController.dispose();
+    _newPasswordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +95,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                         },
                       ),
                       const SizedBox(
-                        height: 40.0,
+                        height: 20.0,
                       ),
                       TextFormField(
                         controller: _newPasswordController,
@@ -116,6 +123,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           if (value == null || value.isEmpty) {
                             return 'Please enter a new password';
                           }
+                          if (value.length < 6) {
+                            return 'Password must be at least 6 characters long';
+                          }
                           return null;
                         },
                       ),
@@ -125,21 +135,34 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () async {
+                          onPressed: _isLoading ? null : () async {
                             if (_formKey.currentState!.validate()) {
+                              setState(() {
+                                _isLoading = true; // Set loading state to true
+                              });
+
                               bool success = await ApiService.resetPassword(
                                 widget.email,
                                 _resetCodeController.text,
                                 _newPasswordController.text,
                               );
+
+                              setState(() {
+                                _isLoading = false; // Set loading state to false
+                              });
+
                               if (success) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('Password reset successfully'),
-                                    backgroundColor: Colors.blue,
+                                    backgroundColor: Colors.green,  // Changed to green for success
                                   ),
                                 );
-                                Navigator.pushNamed(context, '/login');
+                                Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  '/login',
+                                  (route) => false,  // Clear the navigation stack
+                                );
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
@@ -150,7 +173,11 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                               }
                             }
                           },
-                          child: const Text('Reset Password'),
+                          child: _isLoading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
+                              : const Text('Reset Password'),
                         ),
                       ),
                       const SizedBox(
