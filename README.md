@@ -136,11 +136,4 @@ A simple Todo application built with Flutter that integrates with a Django backe
 4. **Usability**:
    - Focused on a clean and intuitive UI design.
    - Ensured the app is easy to navigate and use, with clear prompts and error messages.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Acknowledgments
-
-- Thanks to the Django and Flutter communities for their excellent documentation and support.
+### App Ui
