@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/user.dart';
 import 'package:todo_app/services/api_service.dart';
+import 'package:todo_app/screens/profile/update_profile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -22,6 +24,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () async {
+              // Handle logout
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              await prefs.remove('access_token');
+              Navigator.of(context).pushReplacementNamed('/login');
+            },
+          ),
+        ],
       ),
       body: FutureBuilder<User>(
         future: futureUser,
@@ -30,7 +43,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
+          } else if (snapshot.hasData) {
             User user = snapshot.data!;
             return Padding(
               padding: EdgeInsets.all(16.0),
@@ -40,15 +53,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Text('Full Name: ${user.fullName}'),
                   Text('Username: ${user.username}'),
                   Text('Email: ${user.email}'),
+                  SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      // Navigate to update profile screen
+                      // Navigate to the UpdateProfileScreen
+                      Navigator.pushNamed(
+                        context,
+                        '/update-profile',
+                        arguments: user,
+                      );
                     },
                     child: Text('Update Profile'),
                   ),
                 ],
               ),
             );
+          } else {
+            return Center(child: Text('No profile data available'));
           }
         },
       ),

@@ -3,6 +3,7 @@ import 'package:todo_app/models/task.dart';
 import 'package:todo_app/services/api_service.dart';
 import 'package:todo_app/screens/todos/todo_detail.dart';
 import 'package:todo_app/screens/todos/create_todo.dart';
+import 'package:todo_app/screens/profile/profile.dart'; // Import profile screen
 import 'package:todo_app/widgets/custom_scaffold.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
@@ -210,16 +211,35 @@ class _TodoListScreenState extends State<TodoListScreen> {
             });
           },
         ),
+        // IconButton(
+        //   icon: Icon(Icons.refresh, color: Colors.blue),
+        //   onPressed: () {
+        //     _fetchTasks(); // Call the method to refresh the task list
+        //   },
+        // ),
         IconButton(
-          icon: Icon(Icons.refresh, color: Colors.blue),
+          icon: Icon(Icons.logout, color: Colors.red),
           onPressed: () {
-            _fetchTasks(); // Call the method to refresh the task list
+            // Implement logout functionality
           },
         ),
       ],
       elevation: 0,
       backgroundColor: Colors.white60, // Set AppBar background color
     );
+  }
+
+  int _currentIndex = 0;
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+      if (index == 1) {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => ProfileScreen()), // Navigate to profile screen
+        );
+      }
+    });
   }
 
   @override
@@ -263,6 +283,20 @@ class _TodoListScreenState extends State<TodoListScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onTabTapped,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Tasks',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+      ),
     );
   }
 }

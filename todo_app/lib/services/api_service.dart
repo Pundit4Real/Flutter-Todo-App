@@ -135,40 +135,72 @@ static Future<Map<String, dynamic>> loginUser(String email, String password) asy
       throw Exception('Failed to reset password');
     }
   }
-
   // Fetch user profile
   static Future<User> getUserProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('access_token');
+
+    if (accessToken == null) {
+      throw Exception('No authentication token found');
+    }
+
     final response = await http.get(
       Uri.parse('$baseUrl/auth/profile/'),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
       },
     );
+
+    print('Response Status: ${response.statusCode}');
+    print('Response Body: ${response.body}');
+
     if (response.statusCode == 200) {
-      return User.fromJson(jsonDecode(response.body));
+      Map<String, dynamic> jsonData = jsonDecode(response.body);
+      List<dynamic> resultsJson = jsonData['results'];
+      if (resultsJson.isNotEmpty) {
+        return User.fromJson(resultsJson[0]);
+      } else {
+        throw Exception('No user profile found in the response');
+      }
+    } else if (response.statusCode == 401) {
+      throw Exception('Unauthorized access. Please log in again.');
     } else {
-      throw Exception('Failed to load user profile');
+      throw Exception('Failed to load user profile: ${response.reasonPhrase}');
     }
   }
 
   // Update user profile
   static Future<bool> updateUserProfile(User user) async {
-    final response = await http.put(
-      Uri.parse('$baseUrl/auth/update-profile/'),
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('access_token');
+
+    if (accessToken == null) {
+      throw Exception('No authentication token found');
+    }
+
+    final response = await http.patch(
+      Uri.parse('$baseUrl/auth/profile/'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
       body: jsonEncode({
         'full_name': user.fullName,
         'username': user.username,
         'email': user.email,
       }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
     );
+
+    print('Response Status: ${response.statusCode}');
+    print('Response Body: ${response.body}');
 
     if (response.statusCode == 200) {
       return true;
+    } else if (response.statusCode == 401) {
+      throw Exception('Unauthorized access. Please log in again.');
     } else {
-      throw Exception('Failed to update user profile');
+      throw Exception('Failed to update user profile: ${response.reasonPhrase}');
     }
   }
 

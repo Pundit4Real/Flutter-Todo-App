@@ -8,12 +8,14 @@ class CustomScaffold extends StatelessWidget {
     required this.child,
     this.floatingActionButton,
     this.floatingActionButtonLocation,
+    this.bottomNavigationBar,
   });
 
   final PreferredSizeWidget? appBar;
   final Widget child;
   final Widget? floatingActionButton;
   final FloatingActionButtonLocation? floatingActionButtonLocation;
+  final BottomNavigationBar? bottomNavigationBar; 
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +52,7 @@ class CustomScaffold extends StatelessWidget {
       ),
       floatingActionButton: floatingActionButton,
       floatingActionButtonLocation: floatingActionButtonLocation,
+      bottomNavigationBar: bottomNavigationBar, 
     );
   }
 }

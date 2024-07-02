@@ -198,10 +198,10 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
-                      padding: EdgeInsets.symmetric(vertical: 14.0),
+                      padding: EdgeInsets.symmetric(vertical: 14.0,horizontal: 20),
                     ),
                   ),
-                  SizedBox(height: 16.0),
+                  SizedBox(height: 20.0),
                   CheckboxListTile(
                     title: Text('Completed'),
                     value: _completed,
