@@ -139,7 +139,22 @@ A simple Todo application built with Flutter that integrates with a Django backe
 
 ### App Ui [ Screenshots ]
 
-#### App Home Screen
+#### Splash Screen                  #### Splash Screen
+
+![Splash Screen](ui/splash.jpg)     ![Splash Screen](ui/splash.jpg)
+#### Splash Screen
+
+
+
+
+![Splash Screen](ui/splash.jpg)
+#### Splash Screen
+
+![Splash Screen](ui/splash.jpg)
+#### Splash Screen
+
+![Splash Screen](ui/splash.jpg)
+#### Splash Screen
 
 ![Splash Screen](ui/splash.jpg)
 
