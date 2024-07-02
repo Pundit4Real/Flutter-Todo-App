@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/models/task.dart';
-import 'package:todo_app/services/api_service.dart';
-import 'package:todo_app/widgets/custom_scaffold.dart';
+import 'package:todo_master/models/task.dart';
+import 'package:todo_master/services/api_service.dart';
+import 'package:todo_master/widgets/custom_scaffold.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 class UpdateTaskScreen extends StatefulWidget {
@@ -19,6 +19,7 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
   late TextEditingController _descriptionController;
   late DateTime _dueDate;
   late bool _completed;
+  int _currentIndex = 0; // Set to 0 for Tasks
 
   @override
   void initState() {
@@ -38,7 +39,7 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
           description: _descriptionController.text.isEmpty ? null : _descriptionController.text,
           completed: _completed,
           dueDate: _dueDate,
-          dateCreated: widget.task.dateCreated, // Ensure dateCreated is included
+          dateCreated: widget.task.dateCreated,
         );
 
         await ApiService.updateTask(updatedTask);
@@ -46,7 +47,7 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Task updated successfully')),
         );
-        Navigator.pop(context, true); // Return true to indicate a successful update
+        Navigator.pop(context, true);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to update task')),
@@ -61,11 +62,22 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Task deleted successfully')),
       );
-      Navigator.pop(context, true); // Notify the previous screen about the deletion
+      Navigator.pop(context, true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to delete task')),
       );
+    }
+  }
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, '/todo-list');
+    } else if (index == 1) {
+      Navigator.pushReplacementNamed(context, '/profile');
     }
   }
 
@@ -83,7 +95,7 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
             Navigator.of(context).pop();
           },
         ),
-        title: null,  // Set title to null to use flexibleSpace for centering
+        title: null,
         flexibleSpace: Center(
           child: Text.rich(
             TextSpan(
@@ -101,13 +113,14 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.normal,
-                    color: Colors.blue,  // Change the color for part of the text
+                    color: Colors.blue,
                   ),
                 ),
               ],
             ),
           ),
         ),
+        backgroundColor: Colors.white60,
         actions: [
           IconButton(
             icon: Icon(Icons.delete, color: Colors.red),
@@ -193,12 +206,12 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
                     },
                     child: Text('Select Due Date'),
                     style: ElevatedButton.styleFrom(
-                      iconColor: Colors.blue,  // Background color
-                      foregroundColor: Colors.blue,  // Text color
+                      iconColor: Colors.blue,
+                      foregroundColor: Colors.blue,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
-                      padding: EdgeInsets.symmetric(vertical: 14.0,horizontal: 20),
+                      padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 20),
                     ),
                   ),
                   SizedBox(height: 20.0),
@@ -218,8 +231,8 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
                       onPressed: _updateTask,
                       child: Text('Update Task'),
                       style: ElevatedButton.styleFrom(
-                        iconColor: Colors.blue,  // Background color
-                        foregroundColor: Colors.blue,  // Text color
+                        iconColor: Colors.blue,
+                        foregroundColor: Colors.blue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         ),
@@ -232,6 +245,20 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
             ),
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onTabTapped,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Tasks',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
       ),
     );
   }

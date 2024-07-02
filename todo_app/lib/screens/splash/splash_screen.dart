@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/utils/constants.dart';
-import 'package:todo_app/screens/auth/welcome.dart';
+import 'package:todo_master/utils/constants.dart';
+import 'package:todo_master/screens/auth/welcome.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: Duration(seconds: 3),
+      duration: Duration(seconds: 2),
       vsync: this,
     );
 
@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     );
 
     _controller.forward().then((_) {
-      Future.delayed(Duration(seconds: 2), () {
+      Future.delayed(Duration(seconds: 1), () {
         Navigator.of(context).pushReplacement(_createRoute());
       });
     });
@@ -86,7 +86,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       ),
                     ),
                     TextSpan(
-                      text: 'TaskMaster is your new tool for managing tasks effectively.\n',
+                      text: 'TodoMaster is your new tool for managing tasks effectively.\n',
                       style: TextStyle(
                         fontSize: 22.0,
                         fontWeight: FontWeight.w400,

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/models/user.dart';
-import 'package:todo_app/services/api_service.dart';
-import 'package:todo_app/widgets/custom_scaffold.dart';
+import 'package:todo_master/models/user.dart';
+import 'package:todo_master/services/api_service.dart';
+import 'package:todo_master/widgets/custom_scaffold.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:todo_app/utils/constants.dart';
+import 'package:todo_master/utils/constants.dart';
 
 class RegisterScreen extends StatefulWidget {
   @override
@@ -64,7 +64,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                             ),
                             TextSpan(
-                              text: 'Sign up to create your TaskMaster account and begin your path to success.',
+                              text: 'Sign up to create your TodoMaster account and begin your path to success.',
                               style: TextStyle(
                                 fontSize: 16.0,  // Adjusted for better fit
                                 fontWeight: FontWeight.w400,

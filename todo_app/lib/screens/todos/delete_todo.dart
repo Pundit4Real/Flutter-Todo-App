@@ -1,7 +1,7 @@
 // screens/delete_task_screen.dart
 import 'package:flutter/material.dart';
-import 'package:todo_app/models/task.dart';
-import 'package:todo_app/services/api_service.dart';
+import 'package:todo_master/models/task.dart';
+import 'package:todo_master/services/api_service.dart';
 
 class DeleteTaskScreen extends StatelessWidget {
   final Task task;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/services/api_service.dart';
-import 'package:todo_app/widgets/custom_scaffold.dart';
-import 'package:todo_app/utils/constants.dart';
+import 'package:todo_master/services/api_service.dart';
+import 'package:todo_master/widgets/custom_scaffold.dart';
+import 'package:todo_master/utils/constants.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   final String email;

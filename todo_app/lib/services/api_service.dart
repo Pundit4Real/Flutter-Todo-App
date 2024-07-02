@@ -1,8 +1,8 @@
 // services/api_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:todo_app/models/user.dart';
-import 'package:todo_app/models/task.dart';
+import 'package:todo_master/models/user.dart';
+import 'package:todo_master/models/task.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
@@ -87,21 +87,33 @@ static Future<Map<String, dynamic>> loginUser(String email, String password) asy
 
   // Change password
   static Future<bool> changePassword(String oldPassword, String newPassword) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? accessToken = prefs.getString('access_token');
+    
+    if (accessToken == null) {
+      throw Exception('No authentication token found');
+    }
+
     final response = await http.post(
       Uri.parse('$baseUrl/auth/change-password/'),
       body: jsonEncode({'old_password': oldPassword, 'new_password': newPassword}),
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',  // Using 'Bearer' for the token
       },
     );
 
     if (response.statusCode == 200) {
       return true;
+    } else if (response.statusCode == 401) {
+      throw Exception('Unauthorized: Invalid token or expired');
+    } else if (response.statusCode == 400) {
+      throw Exception('Bad Request: Check old and new passwords');
     } else {
-      throw Exception('Failed to change password');
+      throw Exception('Failed to change password: ${response.reasonPhrase}');
     }
   }
-
+  
   // Forgot password
   static Future<bool> forgotPassword(String email) async {
     final response = await http.post(
@@ -135,6 +147,8 @@ static Future<Map<String, dynamic>> loginUser(String email, String password) asy
       throw Exception('Failed to reset password');
     }
   }
+
+
   // Fetch user profile
   static Future<User> getUserProfile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

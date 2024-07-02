@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/models/user.dart';
-import 'package:todo_app/screens/auth/login.dart';
-import 'package:todo_app/screens/auth/registration.dart';
-import 'package:todo_app/screens/todos/list_todo.dart' as list;
-import 'package:todo_app/screens/todos/create_todo.dart' as create;
-import 'package:todo_app/screens/todos/update_todo.dart' as update;
-import 'package:todo_app/screens/todos/todo_detail.dart' as detail;
-import 'package:todo_app/screens/todos/delete_todo.dart' as delete;
-import 'package:todo_app/screens/profile/profile.dart' as profile;
-import 'package:todo_app/screens/profile/update_profile.dart' as update_profile;
-import 'package:todo_app/models/task.dart';
-import 'package:todo_app/screens/auth/welcome.dart';
-import 'package:todo_app/screens/auth/email_verification.dart';
-import 'package:todo_app/screens/auth/reset_password.dart';
-import 'package:todo_app/screens/auth/forgot_password.dart';
-import 'package:todo_app/screens/splash/splash_screen.dart';
+import 'package:todo_master/models/user.dart';
+import 'package:todo_master/screens/auth/login.dart';
+import 'package:todo_master/screens/auth/registration.dart';
+import 'package:todo_master/screens/todos/list_todo.dart' as list;
+import 'package:todo_master/screens/todos/create_todo.dart' as create;
+import 'package:todo_master/screens/todos/update_todo.dart' as update;
+import 'package:todo_master/screens/todos/todo_detail.dart' as detail;
+import 'package:todo_master/screens/todos/delete_todo.dart' as delete;
+import 'package:todo_master/screens/profile/profile.dart' as profile;
+import 'package:todo_master/screens/profile/update_profile.dart' as update_profile;
+import 'package:todo_master/screens/auth/change_password.dart' as change_password;
+import 'package:todo_master/models/task.dart';
+import 'package:todo_master/screens/auth/welcome.dart';
+import 'package:todo_master/screens/auth/email_verification.dart';
+import 'package:todo_master/screens/auth/reset_password.dart';
+import 'package:todo_master/screens/auth/forgot_password.dart';
+import 'package:todo_master/screens/splash/splash_screen.dart';
 
 void main() {
   runApp(TodoApp());
@@ -63,6 +64,8 @@ class TodoApp extends StatelessWidget {
           case '/update-profile':
             final user = settings.arguments as User;
             return MaterialPageRoute(builder: (context) => update_profile.UpdateProfileScreen(user: user));
+          case '/change-password':
+            return MaterialPageRoute(builder: (context) => change_password.ChangePasswordScreen());
           case '/verify-email':
             final args = settings.arguments as Map<String, dynamic>;
             return MaterialPageRoute(

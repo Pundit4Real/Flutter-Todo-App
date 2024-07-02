@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:todo_app/services/api_service.dart';
-import 'package:todo_app/utils/constants.dart';
-import 'package:todo_app/widgets/custom_scaffold.dart';
-import 'package:todo_app/screens/auth/registration.dart';
-import 'package:todo_app/screens/auth/forgot_password.dart';
+import 'package:todo_master/services/api_service.dart';
+import 'package:todo_master/utils/constants.dart';
+import 'package:todo_master/widgets/custom_scaffold.dart';
+import 'package:todo_master/screens/auth/registration.dart';
+import 'package:todo_master/screens/auth/forgot_password.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -63,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                             TextSpan(
-                              text: 'Log in to your TaskMaster account and start tackling your to-dos',
+                              text: 'Log in to your TodoMaster account and start tackling your to-dos',
                               style: TextStyle(
                                 fontSize: 18.0,
                                 fontWeight: FontWeight.w400,

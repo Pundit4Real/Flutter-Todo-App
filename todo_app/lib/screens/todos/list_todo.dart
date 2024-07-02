@@ -1,13 +1,13 @@
 // screens/todo_list_screen.dart
 import 'package:flutter/material.dart';
-import 'package:todo_app/models/task.dart';
-import 'package:todo_app/services/api_service.dart';
-import 'package:todo_app/screens/todos/todo_detail.dart';
-import 'package:todo_app/screens/todos/create_todo.dart';
-import 'package:todo_app/screens/profile/profile.dart'; // Import profile screen
-import 'package:todo_app/widgets/custom_scaffold.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
+import 'package:todo_master/models/task.dart';
+import 'package:todo_master/services/api_service.dart';
+import 'package:todo_master/screens/todos/todo_detail.dart';
+import 'package:todo_master/screens/todos/create_todo.dart';
+import 'package:todo_master/screens/profile/profile.dart'; 
+import 'package:todo_master/widgets/custom_scaffold.dart';
+// import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:shared_preferences/shared_preferences.dart'; 
 
 class TodoListScreen extends StatefulWidget {
   @override
@@ -219,7 +219,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
         ),
       ],
       elevation: 0,
-      backgroundColor: Colors.white60, // Set AppBar background color
+      backgroundColor: Colors.white60,
     );
   }
 

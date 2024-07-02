@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/models/task.dart';
-import 'package:todo_app/services/api_service.dart';
-import 'package:todo_app/widgets/custom_scaffold.dart';
+import 'package:todo_master/models/task.dart';
+import 'package:todo_master/services/api_service.dart';
+import 'package:todo_master/widgets/custom_scaffold.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 class CreateTaskScreen extends StatefulWidget {
@@ -14,6 +14,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   DateTime _dueDate = DateTime.now();
+  int _currentIndex = 0; // Set to 0 for Tasks
 
   Future<void> _createTask() async {
     if (_formKey.currentState!.validate()) {
@@ -30,23 +31,38 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         Task createdTask = await ApiService.createTask(newTask);
         if (createdTask != null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Task created successfully'),
-            backgroundColor: Colors.blue,
+            SnackBar(
+              content: Text('Task created successfully'),
+              backgroundColor: Colors.blue,
             ),
           );
           Navigator.pop(context, true); // Pass true to indicate a new task was created
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to create task'),
-            backgroundColor: Colors.red,
+            SnackBar(
+              content: Text('Failed to create task'),
+              backgroundColor: Colors.red,
             ),
           );
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(
+            content: Text('Error: $e'),
+          ),
         );
       }
+    }
+  }
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, '/todo-list');
+    } else if (index == 1) {
+      Navigator.pushReplacementNamed(context, '/profile');
     }
   }
 
@@ -64,7 +80,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
             Navigator.of(context).pop();
           },
         ),
-        title: null,  // Set title to null to use flexibleSpace for centering
+        title: null, // Set title to null to use flexibleSpace for centering
         flexibleSpace: Center(
           child: Text.rich(
             TextSpan(
@@ -82,16 +98,15 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.normal,
-                    color: Colors.blue,  // Change the color for part of the text
+                    color: Colors.blue, // Change the color for part of the text
                   ),
                 ),
               ],
             ),
           ),
         ),
-        
+        backgroundColor: Colors.white60,
       ),
-
       child: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16.0),
@@ -161,7 +176,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                       child: Text('Select Due Date'),
                       style: ElevatedButton.styleFrom(
                         foregroundColor: Colors.black,
-
                         iconColor: Theme.of(context).primaryColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.0),
@@ -177,7 +191,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: Colors.blue,
-                          // iconColor: Theme.of(context).primaryColor,
                           padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                           textStyle: TextStyle(fontSize: 16),
                           shape: RoundedRectangleBorder(
@@ -192,6 +205,20 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
             ),
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onTabTapped,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Tasks',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
       ),
     );
   }

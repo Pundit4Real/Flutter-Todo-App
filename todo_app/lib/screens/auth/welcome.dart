@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/screens/auth/login.dart';
-import 'package:todo_app/screens/auth/registration.dart';
-import 'package:todo_app/utils/constants.dart';
-import 'package:todo_app/widgets/custom_scaffold.dart';
-import 'package:todo_app/widgets/welcome_button.dart';
+import 'package:todo_master/screens/auth/login.dart';
+import 'package:todo_master/screens/auth/registration.dart';
+import 'package:todo_master/utils/constants.dart';
+import 'package:todo_master/widgets/custom_scaffold.dart';
+import 'package:todo_master/widgets/welcome_button.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -31,7 +31,7 @@ class WelcomeScreen extends StatelessWidget {
                   text: const TextSpan(
                     children: [
                       TextSpan(
-                        text: 'Welcome to TaskMaster!\n',
+                        text: 'Welcome to TodoMaster!\n',
                         style: TextStyle(
                           fontSize: 40.0,
                           fontWeight: FontWeight.w600,

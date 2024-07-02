@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/models/task.dart';
-import 'package:todo_app/services/api_service.dart';
-import 'package:todo_app/screens/todos/update_todo.dart'; // Import the UpdateTaskScreen
-import 'package:todo_app/widgets/custom_scaffold.dart';
+import 'package:todo_master/models/task.dart';
+import 'package:todo_master/services/api_service.dart';
+import 'package:todo_master/screens/todos/update_todo.dart'; // Import the UpdateTaskScreen
+import 'package:todo_master/widgets/custom_scaffold.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 class TaskDetailScreen extends StatefulWidget {
@@ -16,6 +16,7 @@ class TaskDetailScreen extends StatefulWidget {
 
 class _TaskDetailScreenState extends State<TaskDetailScreen> {
   late Task _task;
+  int _currentIndex = 0; // Set to 0 for Tasks
 
   @override
   void initState() {
@@ -35,14 +36,16 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Task updated successfully'),
-        backgroundColor: Colors.blue,
+        SnackBar(
+          content: Text('Task updated successfully'),
+          backgroundColor: Colors.blue,
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update task'),
-        backgroundColor: Colors.red,
+        SnackBar(
+          content: Text('Failed to update task'),
+          backgroundColor: Colors.red,
         ),
       );
     }
@@ -52,17 +55,30 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
     bool success = await ApiService.deleteTask(_task.id);
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Task deleted successfully'),
-        backgroundColor: Colors.blue,
+        SnackBar(
+          content: Text('Task deleted successfully'),
+          backgroundColor: Colors.blue,
         ),
       );
       Navigator.pop(context, true); // Notify the previous screen about the deletion
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to delete task'),
-      backgroundColor: Colors.red,
+        SnackBar(
+          content: Text('Failed to delete task'),
+          backgroundColor: Colors.red,
         ),
       );
+    }
+  }
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+    if (index == 0) {
+      Navigator.pushReplacementNamed(context, '/todo-list');
+    } else if (index == 1) {
+      Navigator.pushReplacementNamed(context, '/profile');
     }
   }
 
@@ -80,7 +96,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             Navigator.of(context).pop();
           },
         ),
-        title: null,  // Set title to null to use flexibleSpace for centering
+        title: null, // Set title to null to use flexibleSpace for centering
         flexibleSpace: Center(
           child: Text.rich(
             TextSpan(
@@ -98,7 +114,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.normal,
-                    color: Colors.blue,  // Change the color for part of the text
+                    color: Colors.blue, // Change the color for part of the text
                   ),
                 ),
               ],
@@ -111,8 +127,8 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             onPressed: _deleteTask,
           ),
         ],
+        backgroundColor: Colors.white60,
       ),
-
       child: Center(
         child: Padding(
           padding: EdgeInsets.all(16.0),
@@ -198,7 +214,6 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                     width: double.infinity,
                     child: Card(
                       color: Colors.blue.shade50,
-
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
                       ),
@@ -245,6 +260,20 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
             ),
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onTabTapped,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Tasks',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
       ),
     );
   }
