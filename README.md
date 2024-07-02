@@ -147,7 +147,7 @@ A simple Todo application built with Flutter that integrates with a Django backe
 ![welcome Screen](ui/welcome.jpg)
 
 #### logIn Screen
-![login Screen](ui/logIn.jpg)
+![login Screen](ui/signIn.jpg)
 
 #### SignUp Screen
 ![signUp Screen](ui/signUp.jpg)
