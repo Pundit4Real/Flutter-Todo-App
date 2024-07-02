@@ -74,7 +74,9 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
+                  print("Update Profile button pressed"); // Logging button press
                   if (_formKey.currentState!.validate()) {
+                    print("Form validated"); // Logging form validation
                     User updatedUser = User(
                       id: widget.user.id,
                       fullName: _fullNameController.text.isNotEmpty ? _fullNameController.text : null,
@@ -82,7 +84,11 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       email: _emailController.text,
                       avatar: widget.user.avatar,
                     );
+                    print("Updated user data prepared: ${updatedUser.toJson()}"); // Logging user data
+
                     bool success = await ApiService.updateUserProfile(updatedUser);
+                    print("API call success: $success"); // Logging API call result
+
                     if (success) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Profile updated successfully')),

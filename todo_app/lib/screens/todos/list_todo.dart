@@ -1,3 +1,4 @@
+// screens/todo_list_screen.dart
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/task.dart';
 import 'package:todo_app/services/api_service.dart';
@@ -6,6 +7,7 @@ import 'package:todo_app/screens/todos/create_todo.dart';
 import 'package:todo_app/screens/profile/profile.dart'; // Import profile screen
 import 'package:todo_app/widgets/custom_scaffold.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 
 class TodoListScreen extends StatefulWidget {
   @override
@@ -96,6 +98,12 @@ class _TodoListScreenState extends State<TodoListScreen> {
     }
   }
 
+  Future<void> _logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('access_token'); // Remove the access token from SharedPreferences
+    Navigator.of(context).pushReplacementNamed('/login'); // Navigate to login screen
+  }
+
   Widget _buildTaskCard(Task task) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -148,16 +156,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      leading: IconButton(
-        icon: Icon(
-          Feather.chevron_left,
-          size: 30,
-        ),
-        color: Colors.blue,
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-      ),
+      // Remove the back button from the app bar
+      automaticallyImplyLeading: false,
       title: _isSearching
           ? TextField(
               controller: _searchController,
@@ -211,16 +211,10 @@ class _TodoListScreenState extends State<TodoListScreen> {
             });
           },
         ),
-        // IconButton(
-        //   icon: Icon(Icons.refresh, color: Colors.blue),
-        //   onPressed: () {
-        //     _fetchTasks(); // Call the method to refresh the task list
-        //   },
-        // ),
         IconButton(
           icon: Icon(Icons.logout, color: Colors.red),
           onPressed: () {
-            // Implement logout functionality
+            _logout(); // Call the logout method
           },
         ),
       ],
@@ -244,58 +238,61 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-      appBar: _buildAppBar(),
-      child: RefreshIndicator(
-        onRefresh: _fetchTasks,
-        child: FutureBuilder<List<Task>>(
-          future: _taskList,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(
-                  child: Text('Failed to load tasks: ${snapshot.error}'));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('No tasks available'));
-            } else {
-              return ListView.builder(
-                itemCount: _filteredTaskList.length,
-                itemBuilder: (context, index) {
-                  return _buildTaskCard(_filteredTaskList[index]);
-                },
-              );
-            }
-          },
+    return WillPopScope(
+      onWillPop: () async => false, // Disable back gesture
+      child: CustomScaffold(
+        appBar: _buildAppBar(),
+        child: RefreshIndicator(
+          onRefresh: _fetchTasks,
+          child: FutureBuilder<List<Task>>(
+            future: _taskList,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(
+                    child: Text('Failed to load tasks: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return Center(child: Text('No tasks available'));
+              } else {
+                return ListView.builder(
+                  itemCount: _filteredTaskList.length,
+                  itemBuilder: (context, index) {
+                    return _buildTaskCard(_filteredTaskList[index]);
+                  },
+                );
+              }
+            },
+          ),
         ),
-      ),
-      floatingActionButton: Container(
-        height: 50.0,
-        width: 50.0,
-        child: FittedBox(
-          child: FloatingActionButton(
-            onPressed: _navigateToAddTask,
-            child: Icon(Icons.add, color: Colors.blue),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(25.0),
+        floatingActionButton: Container(
+          height: 50.0,
+          width: 50.0,
+          child: FittedBox(
+            child: FloatingActionButton(
+              onPressed: _navigateToAddTask,
+              child: Icon(Icons.add, color: Colors.blue),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25.0),
+              ),
             ),
           ),
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Tasks',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: _onTabTapped,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.list),
+              label: 'Tasks',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Profile',
+            ),
+          ],
+        ),
       ),
     );
   }

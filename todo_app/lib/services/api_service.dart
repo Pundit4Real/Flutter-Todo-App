@@ -170,37 +170,37 @@ static Future<Map<String, dynamic>> loginUser(String email, String password) asy
     }
   }
 
-  // Update user profile
+ // Update user profile
   static Future<bool> updateUserProfile(User user) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? accessToken = prefs.getString('access_token');
 
     if (accessToken == null) {
-      throw Exception('No authentication token found');
+      print("No access token found");
+      return false;
     }
 
-    final response = await http.patch(
-      Uri.parse('$baseUrl/auth/profile/'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',
-      },
-      body: jsonEncode({
-        'full_name': user.fullName,
-        'username': user.username,
-        'email': user.email,
-      }),
-    );
+    try {
+      final response = await http.put(
+        Uri.parse('$baseUrl/auth/update-profile/'), // change this if the endpoint is different
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken', // Include the token in the Authorization header
+        },
+        body: jsonEncode(user.toJson()),
+      );
 
-    print('Response Status: ${response.statusCode}');
-    print('Response Body: ${response.body}');
+      print("Response Status: ${response.statusCode}"); // Logging API response status
+      print("Response Body: ${response.body}"); // Logging API response body
 
-    if (response.statusCode == 200) {
-      return true;
-    } else if (response.statusCode == 401) {
-      throw Exception('Unauthorized access. Please log in again.');
-    } else {
-      throw Exception('Failed to update user profile: ${response.reasonPhrase}');
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print("Exception: Failed to update user profile: ${e.toString()}");
+      return false;
     }
   }
 

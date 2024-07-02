@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/user.dart';
 import 'package:todo_app/services/api_service.dart';
-import 'package:todo_app/screens/profile/update_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -28,7 +27,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () async {
-              // Handle logout
               SharedPreferences prefs = await SharedPreferences.getInstance();
               await prefs.remove('access_token');
               Navigator.of(context).pushReplacementNamed('/login');
@@ -53,10 +51,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Text('Full Name: ${user.fullName}'),
                   Text('Username: ${user.username}'),
                   Text('Email: ${user.email}'),
+                  if (user.avatar != null) Image.network(user.avatar!),
                   SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      // Navigate to the UpdateProfileScreen
                       Navigator.pushNamed(
                         context,
                         '/update-profile',
