@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:todo_master/models/user.dart';
 import 'package:todo_master/models/task.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
 
 class ApiService {
   static const String baseUrl = "https://todo4mpedigree.pythonanywhere.com/";
@@ -184,8 +185,9 @@ static Future<Map<String, dynamic>> loginUser(String email, String password) asy
     }
   }
 
- // Update user profile
-  static Future<bool> updateUserProfile(User user) async {
+ 
+  // Update user profile with optional avatar file
+  static Future<bool> updateUserProfile(User user, File? avatarFile) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? accessToken = prefs.getString('access_token');
 
@@ -195,17 +197,25 @@ static Future<Map<String, dynamic>> loginUser(String email, String password) asy
     }
 
     try {
-      final response = await http.put(
-        Uri.parse('$baseUrl/auth/update-profile/'), // change this if the endpoint is different
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $accessToken', // Include the token in the Authorization header
-        },
-        body: jsonEncode(user.toJson()),
-      );
+      final request = http.MultipartRequest('PUT', Uri.parse('$baseUrl/auth/update-profile/'));
+
+      request.headers['Authorization'] = 'Bearer $accessToken';
+      
+      // Adding form fields
+      request.fields['full_name'] = user.fullName ?? '';
+      request.fields['username'] = user.username;
+      request.fields['email'] = user.email;
+
+      // Adding the avatar file if it's provided
+      if (avatarFile != null) {
+        request.files.add(await http.MultipartFile.fromPath('avatar', avatarFile.path));
+      }
+
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
 
       print("Response Status: ${response.statusCode}"); // Logging API response status
-      print("Response Body: ${response.body}"); // Logging API response body
+      print("Response Body: $responseBody"); // Logging API response body
 
       if (response.statusCode == 200) {
         return true;

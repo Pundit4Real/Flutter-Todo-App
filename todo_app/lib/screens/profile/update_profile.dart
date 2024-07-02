@@ -3,6 +3,8 @@ import 'package:todo_master/models/user.dart';
 import 'package:todo_master/services/api_service.dart';
 import 'package:todo_master/widgets/custom_scaffold.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class UpdateProfileScreen extends StatefulWidget {
   final User user;
@@ -18,6 +20,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   late TextEditingController _fullNameController;
   late TextEditingController _usernameController;
   late TextEditingController _emailController;
+  File? _avatarFile; // File to hold the picked image
   int _currentIndex = 1; // Set to 1 for Profile
 
   @override
@@ -36,6 +39,17 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     super.dispose();
   }
 
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _avatarFile = File(pickedFile.path);
+      });
+    }
+  }
+
   Future<void> _updateProfile() async {
     if (_formKey.currentState!.validate()) {
       User updatedUser = User(
@@ -46,7 +60,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         avatar: widget.user.avatar,
       );
 
-      bool success = await ApiService.updateUserProfile(updatedUser);
+      bool success = await ApiService.updateUserProfile(updatedUser, _avatarFile);
 
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -112,7 +126,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
           ),
         ),
         backgroundColor: Colors.white60,
-
       ),
       child: Center(
         child: SingleChildScrollView(
@@ -128,6 +141,36 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                 padding: EdgeInsets.all(30.0),
                 child: Column(
                   children: [
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: _pickImage,
+                          child: CircleAvatar(
+                            radius: 60,
+                            backgroundImage: _avatarFile != null
+                                ? FileImage(_avatarFile!)
+                                : (widget.user.avatar != null
+                                    ? NetworkImage(widget.user.avatar!)
+                                    : null),
+                            child: _avatarFile == null && widget.user.avatar == null
+                                ? Icon(Icons.add_a_photo, size: 50, color: Colors.white)
+                                : null,
+                          ),
+                        ),
+                        if (_avatarFile == null && widget.user.avatar != null)
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Icon(
+                              Icons.camera_alt,
+                              color: Colors.white,
+                              size: 30,
+                            ),
+                          ),
+                      ],
+                    ),
+                    SizedBox(height: 30),
                     TextFormField(
                       controller: _fullNameController,
                       decoration: InputDecoration(

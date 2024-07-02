@@ -29,23 +29,14 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
 
       try {
         Task createdTask = await ApiService.createTask(newTask);
-        if (createdTask != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Task created successfully'),
-              backgroundColor: Colors.blue,
-            ),
-          );
-          Navigator.pop(context, true); // Pass true to indicate a new task was created
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to create task'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Task created successfully'),
+            backgroundColor: Colors.blue,
+          ),
+        );
+        Navigator.pop(context, true); // Pass true to indicate a new task was created
+            } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: $e'),

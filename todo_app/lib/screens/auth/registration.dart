@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:todo_master/models/user.dart';
 import 'package:todo_master/services/api_service.dart';
 import 'package:todo_master/widgets/custom_scaffold.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:todo_master/utils/constants.dart';
 
 class RegisterScreen extends StatefulWidget {

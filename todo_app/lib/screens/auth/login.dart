@@ -250,24 +250,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                   _passwordController.text,
                                 );
 
-                                if (response != null) {
-                                  String accessToken = response['tokens']['access_token'];
-                                  String refreshToken = response['tokens']['refresh_token'];
-                                  String userId = response['user_data']['id'].toString();
-                                  String username = response['user_data']['username'];
-                                  String email = response['user_data']['email'];
+                                String accessToken = response['tokens']['access_token'];
+                                String refreshToken = response['tokens']['refresh_token'];
+                                String userId = response['user_data']['id'].toString();
+                                String username = response['user_data']['username'];
+                                String email = response['user_data']['email'];
 
-                                  // Save tokens to local storage
-                                  await saveTokens(accessToken, refreshToken, userId, username, email);
+                                // Save tokens to local storage
+                                await saveTokens(accessToken, refreshToken, userId, username, email);
 
-                                  // Navigate to the home screen
-                                  Navigator.pushReplacementNamed(context, '/todo-list');
-                                } else {
-                                  setState(() {
-                                    _loginErrorMessage = 'Check your password and try again';
-                                  });
-                                }
-                              } catch (e) {
+                                // Navigate to the home screen
+                                Navigator.pushReplacementNamed(context, '/todo-list');
+                                                            } catch (e) {
                                 setState(() {
                                   _loginErrorMessage = 'Login failed. Please try again.';
                                 });

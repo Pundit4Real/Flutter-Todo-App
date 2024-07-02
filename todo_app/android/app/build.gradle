@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace = "com.example.todo_app"
+    namespace = "com.example.todo_master"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -49,6 +49,28 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.debug
+        }
+    }
+
+    signingConfigs {
+        release {
+            keyAlias 'todomaster-key-alias'
+            keyPassword 'pundit@2035P#'
+            storeFile file('todomaster-release-key.keystore')
+            storePassword 'pundit@2035P#' // Ensure this matches your actual store password
+            storeType 'pkcs12'  // Use 'pkcs12' for modern keystore formats
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            // Enable ProGuard for release builds
+            minifyEnabled true
+            // Shrink resources
+            shrinkResources true
+            // Use the default ProGuard configuration file
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }

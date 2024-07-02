@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:todo_master/utils/constants.dart';
 import 'package:todo_master/screens/auth/welcome.dart';
 
 class SplashScreen extends StatefulWidget {
