@@ -158,6 +158,15 @@ A simple Todo application built with Flutter that integrates with a Django backe
 #### Reset-Password Screen
 ![reset-password Screen](ui/reset-password.jpg)
 
+#### Profile Screen
+![profile Screen](ui/profile.jpg)
+
+#### Profile-edit Screen
+![profile-edit Screen](ui/profile-update.jpg)
+
+#### Change-Password Screen
+![reset-password Screen](ui/change-password.jpg)
+
 #### Todo-List Screen
 ![Todo-list Screen](ui/list-task.jpg)
 

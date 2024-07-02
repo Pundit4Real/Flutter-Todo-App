@@ -20,6 +20,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     futureUser = ApiService.getUserProfile();
   }
 
+  Future<void> _refreshUserProfile() async {
+    setState(() {
+      futureUser = ApiService.getUserProfile();
+    });
+  }
+
   Future<void> _logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.remove('access_token');
@@ -74,6 +80,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
         backgroundColor: Colors.white60,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.refresh, color: Colors.blue),
+            onPressed: () {
+              _refreshUserProfile(); // Call the refresh function
+            },
+          ),
+        ],
       ),
       child: FutureBuilder<User>(
         future: futureUser,

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:todo_master/services/api_service.dart';
 import 'package:todo_master/widgets/custom_scaffold.dart';
-import 'package:todo_master/screens/todos/list_todo.dart'; // Adjust the import path as needed
-import 'package:todo_master/screens/profile/profile.dart'; // Adjust the import path as needed
+import 'package:todo_master/screens/todos/list_todo.dart'; 
+import 'package:todo_master/screens/profile/profile.dart'; 
 
 class ChangePasswordScreen extends StatefulWidget {
   @override
