@@ -164,7 +164,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                             right: 0,
                             child: Icon(
                               Icons.camera_alt,
-                              color: Colors.white,
+                              color: Colors.lightBlue,
                               size: 30,
                             ),
                           ),

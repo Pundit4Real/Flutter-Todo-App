@@ -43,7 +43,6 @@ class ApiService {
 
 // services/api_service.dart
 
-// Verify email
 static Future<bool> verifyEmail(String email, String verificationCode) async {
   final response = await http.post(
     Uri.parse('$baseUrl/auth/verify-email/'),
@@ -100,7 +99,7 @@ static Future<Map<String, dynamic>> loginUser(String email, String password) asy
       body: jsonEncode({'old_password': oldPassword, 'new_password': newPassword}),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',  // Using 'Bearer' for the token
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -297,11 +296,11 @@ static Future<Map<String, dynamic>> loginUser(String email, String password) asy
         'title': task.title,
         'description': task.description,
         'completed': task.completed,
-        'due_date': task.dueDate.toIso8601String(), // Send due_date in ISO 8601 format
+        'due_date': task.dueDate.toIso8601String(),
       }),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',  // Add Authorization header
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
@@ -318,7 +317,7 @@ static Future<Map<String, dynamic>> loginUser(String email, String password) asy
     final response = await http.delete(
       Uri.parse('$baseUrl/todo/tasks/$id/delete/'),
       headers: {
-        'Authorization': 'Bearer $accessToken',  // Add Authorization header
+        'Authorization': 'Bearer $accessToken',
       },
     );
 
