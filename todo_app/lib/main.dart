@@ -16,7 +16,7 @@ import 'package:todo_master/screens/auth/email_verification.dart';
 import 'package:todo_master/screens/auth/reset_password.dart';
 import 'package:todo_master/screens/auth/forgot_password.dart';
 import 'package:todo_master/screens/splash/splash_screen.dart';
-import 'package:todo_master/screens/profile/feedback_screen.dart'; // Import Feedback Screen
+import 'package:todo_master/screens/profile/feedback_screen.dart'; 
 
 void main() {
   runApp(TodoApp());

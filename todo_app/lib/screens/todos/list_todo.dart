@@ -237,71 +237,74 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-      appBar: _buildAppBar(),
-      child: RefreshIndicator(
-        onRefresh: _fetchTasks,
-        child: FutureBuilder<List<Task>>(
-          future: _taskList,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: SpinKitFadingCircle(
-                  color: Colors.blue, // Set the color of the SpinKit icon
-                  size: 50.0,
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Failed to load tasks: ${snapshot.error}'));
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return Center(child: Text('No tasks available'));
-            } else {
-              return ReorderableListView(
-                onReorder: (oldIndex, newIndex) {
-                  setState(() {
-                    if (newIndex > oldIndex) {
-                      newIndex -= 1;
-                    }
-                    final Task task = _filteredTaskList.removeAt(oldIndex);
-                    _filteredTaskList.insert(newIndex, task);
-                  });
-                },
-                children: [
-                  for (int index = 0; index < _filteredTaskList.length; index++)
-                    _buildTaskCard(_filteredTaskList[index], index)
-                ],
-              );
-            }
-          },
+    return WillPopScope(
+      onWillPop: () async => false, // Disable back button
+      child: CustomScaffold(
+        appBar: _buildAppBar(),
+        child: RefreshIndicator(
+          onRefresh: _fetchTasks,
+          child: FutureBuilder<List<Task>>(
+            future: _taskList,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: SpinKitFadingCircle(
+                    color: Colors.blue, // Set the color of the SpinKit icon
+                    size: 50.0,
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Failed to load tasks: ${snapshot.error}'));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return Center(child: Text('No tasks available'));
+              } else {
+                return ReorderableListView(
+                  onReorder: (oldIndex, newIndex) {
+                    setState(() {
+                      if (newIndex > oldIndex) {
+                        newIndex -= 1;
+                      }
+                      final Task task = _filteredTaskList.removeAt(oldIndex);
+                      _filteredTaskList.insert(newIndex, task);
+                    });
+                  },
+                  children: [
+                    for (int index = 0; index < _filteredTaskList.length; index++)
+                      _buildTaskCard(_filteredTaskList[index], index)
+                  ],
+                );
+              }
+            },
+          ),
         ),
-      ),
-      floatingActionButton: Container(
-        height: 50.0,
-        width: 50.0,
-        child: FittedBox(
-          child: FloatingActionButton(
-            onPressed: _navigateToAddTask,
-            child: Icon(Icons.add, color: Colors.blue),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(25.0),
+        floatingActionButton: Container(
+          height: 50.0,
+          width: 50.0,
+          child: FittedBox(
+            child: FloatingActionButton(
+              onPressed: _navigateToAddTask,
+              child: Icon(Icons.add, color: Colors.blue),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25.0),
+              ),
             ),
           ),
         ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: 'Tasks',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: _onTabTapped,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.list),
+              label: 'Tasks',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Profile',
+            ),
+          ],
+        ),
       ),
     );
   }

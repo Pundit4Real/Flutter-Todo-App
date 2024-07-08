@@ -4,6 +4,7 @@ import 'package:todo_master/widgets/custom_scaffold.dart';
 import 'package:todo_master/screens/todos/list_todo.dart';
 import 'package:todo_master/screens/profile/profile.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   @override
@@ -67,10 +68,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
     switch (index) {
       case 0:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => TodoListScreen()),
-        );
+        if (_currentIndex != 0) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => TodoListScreen()),
+          );
+        }
         break;
       case 1:
         Navigator.pushReplacement(
@@ -85,6 +88,16 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   Widget build(BuildContext context) {
     return CustomScaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(
+            Feather.chevron_left,
+            size: 30,
+          ),
+          color: Colors.blue,
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
         title: Center(
           child: Text.rich(
             TextSpan(
