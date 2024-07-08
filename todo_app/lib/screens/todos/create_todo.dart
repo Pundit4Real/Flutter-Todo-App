@@ -14,7 +14,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   DateTime _dueDate = DateTime.now();
-  int _currentIndex = 0; // Set to 0 for Tasks
+  int _currentIndex = 0; 
 
   Future<void> _createTask() async {
     if (_formKey.currentState!.validate()) {
@@ -89,7 +89,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.normal,
-                    color: Colors.blue, // Change the color for part of the text
+                    color: Colors.blue, 
                   ),
                 ),
               ],

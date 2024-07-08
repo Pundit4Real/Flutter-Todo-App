@@ -20,8 +20,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   late TextEditingController _fullNameController;
   late TextEditingController _usernameController;
   late TextEditingController _emailController;
-  late TextEditingController _phoneController;  // New controller
-  late TextEditingController _countryController;  // New controller
+  late TextEditingController _phoneController;  
+  late TextEditingController _countryController; 
   File? _avatarFile;
   int _currentIndex = 1;
 
@@ -31,7 +31,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     _fullNameController = TextEditingController(text: widget.user.fullName ?? '');
     _usernameController = TextEditingController(text: widget.user.username);
     _emailController = TextEditingController(text: widget.user.email);
-    _phoneController = TextEditingController(text: widget.user.phone ?? '');  // Initialize new controller
+    _phoneController = TextEditingController(text: widget.user.phone ?? '');  
     _countryController = TextEditingController(text: widget.user.country ?? '');  // Initialize new controller
   }
 
@@ -40,8 +40,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     _fullNameController.dispose();
     _usernameController.dispose();
     _emailController.dispose();
-    _phoneController.dispose();  // Dispose of the new controller
-    _countryController.dispose();  // Dispose of the new controller
+    _phoneController.dispose();  
+    _countryController.dispose();  
     super.dispose();
   }
 
@@ -64,8 +64,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         fullName: _fullNameController.text.isNotEmpty ? _fullNameController.text : null,
         email: _emailController.text,
         avatar: widget.user.avatar,
-        phone: _phoneController.text,  // Add phone
-        country: _countryController.text,  // Add country
+        phone: _phoneController.text,  
+        country: _countryController.text,  
       );
 
       try {
@@ -285,7 +285,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
-          if (index != 0) {  // Prevent navigation if index is 0 (Tasks)
+          if (index != 0) {  
             _onTabTapped(index);
           }
         },

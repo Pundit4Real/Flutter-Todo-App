@@ -94,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                         onChanged: (_) {
                           setState(() {
-                            _emailError = null; // Clear previous error
+                            _emailError = null; 
                           });
                         },
                         decoration: InputDecoration(
@@ -106,13 +106,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           errorText: _emailError,
                           border: OutlineInputBorder(
                             borderSide: const BorderSide(
-                              color: Colors.black12, // Default border color
+                              color: Colors.black12, 
                             ),
                             borderRadius: BorderRadius.circular(50),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide: const BorderSide(
-                              color: Colors.black12, // Default border color
+                              color: Colors.black12, 
                             ),
                             borderRadius: BorderRadius.circular(50),
                           ),
@@ -147,13 +147,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           errorText: _passwordError,
                           border: OutlineInputBorder(
                             borderSide: const BorderSide(
-                              color: Colors.black12, // Default border color
+                              color: Colors.black12, 
                             ),
                             borderRadius: BorderRadius.circular(50),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide: const BorderSide(
-                              color: Colors.black12, // Default border color
+                              color: Colors.black12, 
                             ),
                             borderRadius: BorderRadius.circular(50),
                           ),
@@ -193,7 +193,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 value: rememberPassword,
                                 onChanged: (bool? value) {
                                   setState(() {
-                                    rememberPassword = value ?? true;  // Default to true
+                                    rememberPassword = value ?? true;
                                   });
                                 },
                                 activeColor: lightColorScheme.primary,
@@ -299,12 +299,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                     }
                                   },
                             style: ButtonStyle(
-                              padding: MaterialStateProperty.all<EdgeInsets>(
+                              padding: WidgetStateProperty.all<EdgeInsets>(
                                 const EdgeInsets.symmetric(vertical: 15.0),
                               ),
-                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                              shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50), // Match the Sign Up button's border radius
+                                  borderRadius: BorderRadius.circular(50),
                                 ),
                               ),
                             ),

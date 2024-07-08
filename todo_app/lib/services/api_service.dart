@@ -228,7 +228,6 @@ static Future<Map<String, dynamic>> resetPassword(
   }
 }
 
-
   // Fetch user profile
   static Future<User> getUserProfile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

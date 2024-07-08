@@ -60,7 +60,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               TextSpan(
                                 text: 'Ready to Organize Your Life?\n',
                                 style: TextStyle(
-                                  fontSize: 26.0,  // Adjusted for better fit
+                                  fontSize: 26.0,  
                                   fontWeight: FontWeight.w900,
                                   color: lightColorScheme.primary,
                                 ),
@@ -96,13 +96,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             border: OutlineInputBorder(
                               borderSide: const BorderSide(
-                                color: Colors.black12, // Default border color
+                                color: Colors.black12, 
                               ),
                               borderRadius: BorderRadius.circular(50),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderSide: const BorderSide(
-                                color: Colors.black12, // Default border color
+                                color: Colors.black12, 
                               ),
                               borderRadius: BorderRadius.circular(50),
                             ),
@@ -166,7 +166,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderSide: const BorderSide(
-                                color: Colors.black12, // Default border color
+                                color: Colors.black12, 
                               ),
                               borderRadius: BorderRadius.circular(50),
                             ),

@@ -90,7 +90,7 @@ class WelcomeScreen extends StatelessWidget {
     return PageRouteBuilder(
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        const beginOffset = Offset(0.0, 1.0); // Slide from bottom
+        const beginOffset = Offset(0.0, 1.0); 
         const endOffset = Offset.zero;
         const curve = Curves.easeInOut;
 
