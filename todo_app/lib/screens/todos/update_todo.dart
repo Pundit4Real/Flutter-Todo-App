@@ -20,6 +20,7 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
   late DateTime _dueDate;
   late bool _completed;
   int _currentIndex = 0; // Set to 0 for Tasks
+  bool _isLoading = false; // Loading state
 
   @override
   void initState() {
@@ -32,6 +33,9 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
 
   Future<void> _updateTask() async {
     if (_formKey.currentState?.validate() ?? false) {
+      setState(() {
+        _isLoading = true;
+      });
       try {
         Task updatedTask = Task(
           id: widget.task.id,
@@ -45,13 +49,21 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
         await ApiService.updateTask(updatedTask);
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Task updated successfully')),
+          SnackBar(content: Text('Task updated successfully'),
+          backgroundColor: Colors.blue,
+          ),
         );
         Navigator.pop(context, true);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update task')),
+          SnackBar(content: Text('Failed to update task'),
+          backgroundColor: Colors.red,
+          ),
         );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -60,12 +72,16 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
     bool success = await ApiService.deleteTask(widget.task.id);
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Task deleted successfully')),
+        SnackBar(content: Text('Task deleted successfully'),
+        backgroundColor: Colors.blue,
+        ),
       );
       Navigator.pop(context, true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to delete task')),
+        SnackBar(content: Text('Failed to delete task'),
+        backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -74,9 +90,7 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
     setState(() {
       _currentIndex = index;
     });
-    if (index == 0) {
-      Navigator.pushReplacementNamed(context, '/todo-list');
-    } else if (index == 1) {
+    if (index == 1) {
       Navigator.pushReplacementNamed(context, '/profile');
     }
   }
@@ -128,123 +142,137 @@ class _UpdateTaskScreenState extends State<UpdateTaskScreen> {
           ),
         ],
       ),
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          elevation: 4.0,
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextFormField(
-                    controller: _titleController,
-                    decoration: InputDecoration(
-                      labelText: 'Title',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide: BorderSide(color: Colors.blue),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide: BorderSide(color: Colors.blue),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the task title';
-                      }
-                      return null;
-                    },
+      child: Stack(
+        children: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 40.0), // Reduce height from the bottom by 40px
+              child: SingleChildScrollView(
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
                   ),
-                  SizedBox(height: 16.0),
-                  TextFormField(
-                    controller: _descriptionController,
-                    decoration: InputDecoration(
-                      labelText: 'Description',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide: BorderSide(color: Colors.blue),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                        borderSide: BorderSide(color: Colors.blue),
-                      ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter the task description';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20.0),
-                  Text(
-                    'Due Date: ${_dueDate.toLocal().toString().split(' ')[0]}',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 20.0),
-                  ElevatedButton(
-                    onPressed: () async {
-                      DateTime? selectedDate = await showDatePicker(
-                        context: context,
-                        initialDate: _dueDate,
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(2100),
-                      );
+                  elevation: 4.0,
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min, // Shrinks column to fit content
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextFormField(
+                            controller: _titleController,
+                            decoration: InputDecoration(
+                              labelText: 'Title',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(color: Colors.blue),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(color: Colors.blue),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter the task title';
+                              }
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 16.0),
+                          TextFormField(
+                            controller: _descriptionController,
+                            decoration: InputDecoration(
+                              labelText: 'Description',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(color: Colors.blue),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                                borderSide: BorderSide(color: Colors.blue),
+                              ),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter the task description';
+                              }
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 20.0),
+                          Text(
+                            'Due Date: ${_dueDate.toLocal().toString().split(' ')[0]}',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 20.0),
+                          ElevatedButton(
+                            onPressed: () async {
+                              DateTime? selectedDate = await showDatePicker(
+                                context: context,
+                                initialDate: _dueDate,
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime(2100),
+                              );
 
-                      if (selectedDate != null && selectedDate != _dueDate) {
-                        setState(() {
-                          _dueDate = selectedDate;
-                        });
-                      }
-                    },
-                    child: Text('Select Due Date'),
-                    style: ElevatedButton.styleFrom(
-                      iconColor: Colors.blue,
-                      foregroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
+                              if (selectedDate != null && selectedDate != _dueDate) {
+                                setState(() {
+                                  _dueDate = selectedDate;
+                                });
+                              }
+                            },
+                            child: Text('Select Due Date'),
+                            style: ElevatedButton.styleFrom(
+                              iconColor: Colors.blue,
+                              foregroundColor: Colors.blue,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                              padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 20),
+                            ),
+                          ),
+                          SizedBox(height: 20.0),
+                          CheckboxListTile(
+                            title: Text('Completed'),
+                            value: _completed,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                _completed = value ?? false;
+                              });
+                            },
+                          ),
+                          SizedBox(height: 16.0),
+                          Container(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _updateTask,
+                              child: Text('Update Task'),
+                              style: ElevatedButton.styleFrom(
+                                iconColor: Colors.blue,
+                                foregroundColor: Colors.blue,
+                                backgroundColor: Colors.white70,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12.0),
+                                ),
+                                padding: EdgeInsets.symmetric(vertical: 14.0),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      padding: EdgeInsets.symmetric(vertical: 14.0, horizontal: 20),
                     ),
                   ),
-                  SizedBox(height: 20.0),
-                  CheckboxListTile(
-                    title: Text('Completed'),
-                    value: _completed,
-                    onChanged: (bool? value) {
-                      setState(() {
-                        _completed = value ?? false;
-                      });
-                    },
-                  ),
-                  SizedBox(height: 16.0),
-                  Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _updateTask,
-                      child: Text('Update Task'),
-                      style: ElevatedButton.styleFrom(
-                        iconColor: Colors.blue,
-                        foregroundColor: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        padding: EdgeInsets.symmetric(vertical: 14.0),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
+          if (_isLoading)
+            Center(
+              child: CircularProgressIndicator(),
+            ),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,

@@ -11,11 +11,12 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  bool _isLoading = false;  // Track the loading state
+  bool _isLoading = false;
+  String? _errorMessage;
 
   @override
   void dispose() {
-    _emailController.dispose();  // Dispose of the controller when the widget is disposed
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -50,11 +51,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Forgot Password',
+                        'Forgot Your Password',
                         style: TextStyle(
                           fontSize: 30.0,
                           fontWeight: FontWeight.w900,
                           color: lightColorScheme.primary,
+                        ),
+                      ),
+                      Text(
+                        'No worries! Get a New One Now.',
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.black54,
                         ),
                       ),
                       const SizedBox(
@@ -97,45 +106,59 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         },
                       ),
                       const SizedBox(
-                        height: 40.0,
+                        height: 20.0,
+                      ),
+                      if (_errorMessage != null) ...[
+                        const SizedBox(height: 10),
+                        Text(
+                          _errorMessage!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                      const SizedBox(
+                        height: 20.0,
                       ),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: _isLoading ? null : () async {
-                            if (_formKey.currentState!.validate()) {
-                              setState(() {
-                                _isLoading = true;  // Set loading state to true
-                              });
+                          onPressed: _isLoading
+                              ? null
+                              : () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    setState(() {
+                                      _isLoading = true;
+                                      _errorMessage = null;
+                                    });
 
-                              final email = _emailController.text;
-                              bool success = await ApiService.forgotPassword(email);
-                              setState(() {
-                                _isLoading = false;  // Set loading state to false
-                              });
+                                    final email = _emailController.text;
+                                    var response = await ApiService.forgotPassword(email);
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
 
-                              if (success) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Reset code sent to email'),
-                                    backgroundColor: Colors.white70,
-                                  ),
-                                );
-                                Navigator.pushNamed(
-                                  context,
-                                  '/reset-password',
-                                  arguments: {'email': email},  // Pass email in a Map
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Failed to send reset code'),
-                                    backgroundColor: Colors.red,  // Changed to red for error
-                                  ),
-                                );
-                              }
-                            }
-                          },
+                                    if (response['success']) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Reset code sent to email'),
+                                          backgroundColor: Colors.blue,
+                                        ),
+                                      );
+                                      Navigator.pushNamed(
+                                        context,
+                                        '/reset-password',
+                                        arguments: {'email': email},
+                                      );
+                                    } else {
+                                      setState(() {
+                                        _errorMessage = response['error'];
+                                      });
+                                    }
+                                  }
+                                },
                           child: _isLoading
                               ? const CircularProgressIndicator(
                                   color: Colors.white,

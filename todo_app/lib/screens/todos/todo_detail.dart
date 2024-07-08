@@ -72,13 +72,15 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   }
 
   void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-    if (index == 0) {
-      Navigator.pushReplacementNamed(context, '/todo-list');
-    } else if (index == 1) {
-      Navigator.pushReplacementNamed(context, '/profile');
+    if (index != _currentIndex) {
+      setState(() {
+        _currentIndex = index;
+      });
+      if (index == 0) {
+        Navigator.pushReplacementNamed(context, '/todo-list');
+      } else if (index == 1) {
+        Navigator.pushReplacementNamed(context, '/profile');
+      }
     }
   }
 
@@ -114,7 +116,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                   style: TextStyle(
                     fontSize: 20.0,
                     fontWeight: FontWeight.normal,
-                    color: Colors.blue, // Change the color for part of the text
+                    color: Colors.blue,
                   ),
                 ),
               ],
@@ -191,7 +193,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                             ),
                             SizedBox(height: 4.0),
                             Text(
-                              _task.dueDate.toLocal().toString().split(' ')[0], // Show date only
+                              _task.dueDate.toLocal().toString().split(' ')[0], 
                               style: TextStyle(fontSize: 16),
                             ),
                             SizedBox(height: 16.0),
@@ -238,7 +240,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
                                     _task = updatedTask;
                                   });
                                 } else if (updatedTask == true) {
-                                  Navigator.pop(context, true); // Task was deleted, go back to To-Do List screen
+                                  Navigator.pop(context, true); 
                                 }
                               },
                               child: Text('Edit Task'),

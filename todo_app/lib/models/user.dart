@@ -1,12 +1,14 @@
 // models/user.dart
 class User {
-  final int? id; // Add id field
-  final String? fullName; // Make fullName optional
+  final int? id; 
+  final String? fullName;
   final String username;
   final String email;
-  final String? avatar; // Add avatar field
-  final String? password; // Make password optional
-  final String? passwordConfirm; // Add passwordConfirm
+  final String? avatar; 
+  final String? password; 
+  final String? passwordConfirm;
+  final String? phone; // New field
+  final String? country; // New field
 
   User({
     this.id,
@@ -16,27 +18,31 @@ class User {
     this.avatar,
     this.password,
     this.passwordConfirm,
+    this.phone,  // Initialize the new field
+    this.country,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'], // Map id from JSON
+      id: json['id'], 
       fullName: json['full_name'],
       username: json['username'],
       email: json['email'],
-      avatar: json['avatar'], // Map avatar from JSON
+      avatar: json['avatar'], 
       password: json['password'],
       passwordConfirm: json['password_confirm'],
+      phone: json['phone'], 
+      country: json['country'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id, // Add id to JSON
+      'id': id, 
       if (fullName != null) 'full_name': fullName,
       'username': username,
       'email': email,
-      if (avatar != null) 'avatar': avatar, // Add avatar to JSON
+      if (avatar != null) 'avatar': avatar,
       if (password != null) 'password': password,
       if (passwordConfirm != null) 'password_confirm': passwordConfirm,
     };

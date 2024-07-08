@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:todo_master/services/api_service.dart';
 import 'package:todo_master/widgets/custom_scaffold.dart';
-import 'package:todo_master/screens/todos/list_todo.dart'; 
-import 'package:todo_master/screens/profile/profile.dart'; 
+import 'package:todo_master/screens/todos/list_todo.dart';
+import 'package:todo_master/screens/profile/profile.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   @override
@@ -14,6 +15,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final _oldPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   bool _isLoading = false;
+  bool _isOldPasswordVisible = false;
+  bool _isNewPasswordVisible = false;
   int _currentIndex = 0;
 
   Future<void> _changePassword() async {
@@ -22,24 +25,37 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         _isLoading = true;
       });
 
-      bool success = await ApiService.changePassword(
-        _oldPasswordController.text,
-        _newPasswordController.text,
-      );
+      try {
+        bool success = await ApiService.changePassword(
+          _oldPasswordController.text,
+          _newPasswordController.text,
+        );
 
-      setState(() {
-        _isLoading = false;
-      });
+        setState(() {
+          _isLoading = false;
+        });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(success ? 'Password changed successfully' : 'Failed to change password'),
-          backgroundColor: success ? Colors.blue : Colors.red,
-        ),
-      );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(success ? 'Password changed successfully' : 'Failed to change password'),
+            backgroundColor: success ? Colors.blue : Colors.red,
+          ),
+        );
 
-      if (success) {
-        Navigator.pop(context);
+        if (success) {
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        setState(() {
+          _isLoading = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('An error occurred: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }
@@ -116,8 +132,19 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isOldPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                            color: Colors.grey,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isOldPasswordVisible = !_isOldPasswordVisible;
+                            });
+                          },
+                        ),
                       ),
-                      obscureText: true,
+                      obscureText: !_isOldPasswordVisible,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your old password';
@@ -133,8 +160,19 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12.0),
                         ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _isNewPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                            color: Colors.grey,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isNewPasswordVisible = !_isNewPasswordVisible;
+                            });
+                          },
+                        ),
                       ),
-                      obscureText: true,
+                      obscureText: !_isNewPasswordVisible,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your new password';
@@ -148,8 +186,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       child: ElevatedButton(
                         onPressed: _isLoading ? null : _changePassword,
                         child: _isLoading
-                            ? CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ? SpinKitCircle(
+                                color: Colors.white,
+                                size: 24.0,
                               )
                             : Text('Change Password'),
                         style: ElevatedButton.styleFrom(
@@ -175,11 +214,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         onTap: _onTabTapped,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.list),
+            icon: Icon(Icons.list, color: _currentIndex == 0 ? Colors.blue : Colors.grey),
             label: 'Tasks',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.person, color: _currentIndex == 1 ? Colors.blue : Colors.grey),
             label: 'Profile',
           ),
         ],

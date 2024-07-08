@@ -4,6 +4,7 @@ import 'package:todo_master/services/api_service.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:todo_master/widgets/custom_scaffold.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -12,17 +13,29 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   late Future<User> futureUser;
-  int _currentIndex = 1; // Set to 1 for Profile
+  int _currentIndex = 1;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    futureUser = ApiService.getUserProfile();
+    _refreshUserProfile();
   }
 
   Future<void> _refreshUserProfile() async {
     setState(() {
+      _isLoading = true;
       futureUser = ApiService.getUserProfile();
+    });
+
+    futureUser.then((user) {
+      setState(() {
+        _isLoading = false;
+      });
+    }).catchError((error) {
+      setState(() {
+        _isLoading = false;
+      });
     });
   }
 
@@ -33,12 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-    if (index == 0) {
-      Navigator.pushReplacementNamed(context, '/todo-list');
-    } else if (index == 1) {
+    if (index == 1) {
       Navigator.pushReplacementNamed(context, '/profile');
     }
   }
@@ -84,7 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           IconButton(
             icon: Icon(Icons.refresh, color: Colors.blue),
             onPressed: () {
-              _refreshUserProfile(); // Call the refresh function
+              _refreshUserProfile();
             },
           ),
         ],
@@ -92,93 +100,133 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: FutureBuilder<User>(
         future: futureUser,
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+          if (_isLoading) {
+            return Center(
+              child: SpinKitFadingCircle(
+                color: Colors.blue,
+                size: 50.0,
+              ),
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: SpinKitFadingCircle(
+                color: Colors.blue,
+                size: 50.0,
+              ),
+            );
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (snapshot.hasData) {
             User user = snapshot.data!;
             return Padding(
               padding: EdgeInsets.all(10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // Profile Information Card
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.9,
-                    height: MediaQuery.of(context).size.height * 0.6,
-                    child: Card(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      elevation: 4.0,
-                      child: Padding(
-                        padding: EdgeInsets.all(16.0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (user.avatar != null)
-                              CircleAvatar(
-                                radius: 60,
-                                backgroundImage: NetworkImage(user.avatar!),
-                              ),
-                            SizedBox(height: 16),
-                            ProfileInfoRow(label: 'Full Name:', value: user.fullName ?? 'No full name'),
-                            ProfileInfoRow(label: 'Username:', value: user.username),
-                            ProfileInfoRow(label: 'Email:', value: user.email),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  // Buttons Side by Side
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                elevation: 4.0,
+                child: Padding(
+                  padding: EdgeInsets.all(19.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              '/update-profile',
-                              arguments: user,
-                            );
-                          },
-                          child: Text('Update Profile'),
-                          style: ElevatedButton.styleFrom(
-                            iconColor: Colors.blue,
-                            foregroundColor: Colors.blue,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              Icons.edit,
+                              color: Colors.blue,
+                              size: 25,
                             ),
-                            padding: EdgeInsets.symmetric(vertical: 15.0),
+                            onPressed: () async {
+                              final updatedUser = await Navigator.pushNamed(
+                                context,
+                                '/update-profile',
+                                arguments: user,
+                              ) as User?;
+                              if (updatedUser != null) {
+                                setState(() {
+                                  futureUser = Future.value(updatedUser);  // Refresh profile with the updated user
+                                });
+                              }
+                            },
                           ),
+                          SizedBox(width: 20),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, '/send-feedback');
+                            },
+                            child: Text('Give Feedback'),
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.blue,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 8.0, horizontal: 16.0),
+                              textStyle: TextStyle(fontSize: 12),
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/change-password',
+                              );
+                            },
+                            child: Text('Change Password'),
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.blue,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.0),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 8.0, horizontal: 16.0),
+                              textStyle: TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Center(
+                        child: CircleAvatar(
+                          radius: 60,
+                          backgroundImage: NetworkImage(user.avatar ?? 'https://via.placeholder.com/150'),
                         ),
                       ),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              '/change-password',
-                            );
-                          },
-                          child: Text('Change Password'),
-                          style: ElevatedButton.styleFrom(
-                            iconColor: Colors.orange,
-                            foregroundColor: Colors.black54,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            padding: EdgeInsets.symmetric(vertical: 15.0),
-                          ),
-                        ),
+                      SizedBox(height: 20),
+                      ProfileInfoRow(
+                        icon: Icons.person,
+                        label: 'Full Name:',
+                        value: user.fullName ?? 'No full name',
+                      ),
+                      ProfileInfoRow(
+                        icon: Icons.account_circle,
+                        label: 'Username:',
+                        value: user.username,
+                      ),
+                      ProfileInfoRow(
+                        icon: Icons.email,
+                        label: 'Email:',
+                        value: user.email,
+                      ),
+                      ProfileInfoRow(
+                        icon: Icons.phone,
+                        label: 'Phone:',
+                        value: user.phone ?? 'No phone number',
+                      ),
+                      ProfileInfoRow(
+                        icon: Icons.public,
+                        label: 'Country:',
+                        value: user.country ?? 'No country specified',
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             );
           } else {
@@ -191,7 +239,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         onTap: _onTabTapped,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.list),
+            icon: Icon(Icons.list, color: Colors.grey), // Set the color to grey to indicate disabled
             label: 'Tasks',
           ),
           BottomNavigationBarItem(
@@ -205,34 +253,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
 }
 
 class ProfileInfoRow extends StatelessWidget {
+  final IconData icon;
   final String label;
   final String value;
 
-  ProfileInfoRow({required this.label, required this.value});
+  ProfileInfoRow({required this.icon, required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(bottom: 16.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            '$label',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+          Icon(
+            icon,
+            color: Colors.blue,
+            size: 24.0,
           ),
-          SizedBox(width: 16, height: 25),
+          SizedBox(width: 10),
           Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[600],
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 1),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(35.0),
               ),
-              overflow: TextOverflow.ellipsis, // Ensures long text doesn't overflow
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '$label',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
           ),
         ],

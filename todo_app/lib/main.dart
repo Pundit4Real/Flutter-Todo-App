@@ -16,12 +16,15 @@ import 'package:todo_master/screens/auth/email_verification.dart';
 import 'package:todo_master/screens/auth/reset_password.dart';
 import 'package:todo_master/screens/auth/forgot_password.dart';
 import 'package:todo_master/screens/splash/splash_screen.dart';
+import 'package:todo_master/screens/profile/feedback_screen.dart'; // Import Feedback Screen
 
 void main() {
   runApp(TodoApp());
 }
 
 class TodoApp extends StatelessWidget {
+  final String feedbackUrl = 'https://example.com/feedback'; // Feedback URL
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -77,6 +80,10 @@ class TodoApp extends StatelessWidget {
             return MaterialPageRoute(builder: (context) => ResetPasswordScreen(email: email));
           case '/forgot-password':
             return MaterialPageRoute(builder: (context) => ForgotPasswordScreen());
+          case '/send-feedback':
+            return MaterialPageRoute(
+              builder: (context) => FeedbackScreen(feedbackUrl: feedbackUrl), // Pass feedback URL to FeedbackScreen
+            );
           default:
             return MaterialPageRoute(builder: (context) => WelcomeScreen());
         }

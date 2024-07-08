@@ -1,13 +1,12 @@
-// screens/todo_list_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:todo_master/models/task.dart';
 import 'package:todo_master/services/api_service.dart';
 import 'package:todo_master/screens/todos/todo_detail.dart';
 import 'package:todo_master/screens/todos/create_todo.dart';
-import 'package:todo_master/screens/profile/profile.dart'; 
+import 'package:todo_master/screens/profile/profile.dart';
 import 'package:todo_master/widgets/custom_scaffold.dart';
-// import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:shared_preferences/shared_preferences.dart'; 
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TodoListScreen extends StatefulWidget {
   @override
@@ -104,8 +103,9 @@ class _TodoListScreenState extends State<TodoListScreen> {
     Navigator.of(context).pushReplacementNamed('/login'); // Navigate to login screen
   }
 
-  Widget _buildTaskCard(Task task) {
+  Widget _buildTaskCard(Task task, int index) {
     return Card(
+      key: ValueKey(task.id),
       margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       elevation: 4.0,
@@ -156,8 +156,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      // Remove the back button from the app bar
-      automaticallyImplyLeading: false,
+      automaticallyImplyLeading: false, // Remove the back button from the app bar
       title: _isSearching
           ? TextField(
               controller: _searchController,
@@ -238,61 +237,71 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false, // Disable back gesture
-      child: CustomScaffold(
-        appBar: _buildAppBar(),
-        child: RefreshIndicator(
-          onRefresh: _fetchTasks,
-          child: FutureBuilder<List<Task>>(
-            future: _taskList,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(
-                    child: Text('Failed to load tasks: ${snapshot.error}'));
-              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return Center(child: Text('No tasks available'));
-              } else {
-                return ListView.builder(
-                  itemCount: _filteredTaskList.length,
-                  itemBuilder: (context, index) {
-                    return _buildTaskCard(_filteredTaskList[index]);
-                  },
-                );
-              }
-            },
-          ),
+    return CustomScaffold(
+      appBar: _buildAppBar(),
+      child: RefreshIndicator(
+        onRefresh: _fetchTasks,
+        child: FutureBuilder<List<Task>>(
+          future: _taskList,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: SpinKitFadingCircle(
+                  color: Colors.blue, // Set the color of the SpinKit icon
+                  size: 50.0,
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Failed to load tasks: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('No tasks available'));
+            } else {
+              return ReorderableListView(
+                onReorder: (oldIndex, newIndex) {
+                  setState(() {
+                    if (newIndex > oldIndex) {
+                      newIndex -= 1;
+                    }
+                    final Task task = _filteredTaskList.removeAt(oldIndex);
+                    _filteredTaskList.insert(newIndex, task);
+                  });
+                },
+                children: [
+                  for (int index = 0; index < _filteredTaskList.length; index++)
+                    _buildTaskCard(_filteredTaskList[index], index)
+                ],
+              );
+            }
+          },
         ),
-        floatingActionButton: Container(
-          height: 50.0,
-          width: 50.0,
-          child: FittedBox(
-            child: FloatingActionButton(
-              onPressed: _navigateToAddTask,
-              child: Icon(Icons.add, color: Colors.blue),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25.0),
-              ),
+      ),
+      floatingActionButton: Container(
+        height: 50.0,
+        width: 50.0,
+        child: FittedBox(
+          child: FloatingActionButton(
+            onPressed: _navigateToAddTask,
+            child: Icon(Icons.add, color: Colors.blue),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(25.0),
             ),
           ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: _onTabTapped,
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.list),
-              label: 'Tasks',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Profile',
-            ),
-          ],
-        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onTabTapped,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Tasks',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
       ),
     );
   }

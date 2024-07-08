@@ -16,6 +16,25 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   final _formKey = GlobalKey<FormState>();
   final _verificationCodeController = TextEditingController();
 
+  Future<void> _resendVerificationCode() async {
+    Map<String, dynamic> result = await ApiService.resendVerificationCode(widget.email);
+    if (result['success']) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['message']),
+          backgroundColor: Colors.blue,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['message']),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -47,7 +66,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Verify Email',
+                        'Verify Your Email',
                         style: TextStyle(
                           fontSize: 30.0,
                           fontWeight: FontWeight.w900,
@@ -119,11 +138,11 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                         child: ElevatedButton(
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              bool success = await ApiService.verifyEmail(
+                              Map<String, dynamic> result = await ApiService.verifyEmail(
                                 widget.email,
                                 _verificationCodeController.text,
                               );
-                              if (success) {
+                              if (result['success']) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('Email verification successful'),
@@ -133,15 +152,25 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                 Navigator.pushNamed(context, '/login');
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Email verification failed'),
+                                  SnackBar(
+                                    content: Text(result['message']),
                                     backgroundColor: Colors.red,
                                   ),
                                 );
                               }
                             }
                           },
-                          child: const Text('Verify Email'),
+                          child: const Text('Verify Email Now!'),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 20.0,
+                      ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _resendVerificationCode,
+                          child: const Text('Resend Verification Code'),
                         ),
                       ),
                       const SizedBox(

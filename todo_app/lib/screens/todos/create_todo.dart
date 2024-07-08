@@ -36,7 +36,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           ),
         );
         Navigator.pop(context, true); // Pass true to indicate a new task was created
-            } catch (e) {
+      } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: $e'),
@@ -51,7 +51,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       _currentIndex = index;
     });
     if (index == 0) {
-      Navigator.pushReplacementNamed(context, '/todo-list');
+      // Do nothing since "Tasks" is inactive on this screen
     } else if (index == 1) {
       Navigator.pushReplacementNamed(context, '/profile');
     }
@@ -136,12 +136,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                       ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the task description';
-                        }
-                        return null;
-                      },
                     ),
                     SizedBox(height: 30),
                     Text(
@@ -202,7 +196,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         onTap: _onTabTapped,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.list),
+            icon: Icon(Icons.list, color: Colors.grey), // Inactive color
             label: 'Tasks',
           ),
           BottomNavigationBarItem(

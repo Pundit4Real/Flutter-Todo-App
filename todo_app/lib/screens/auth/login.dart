@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:icons_plus/icons_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_master/services/api_service.dart';
 import 'package:todo_master/utils/constants.dart';
 import 'package:todo_master/widgets/custom_scaffold.dart';
 import 'package:todo_master/screens/auth/registration.dart';
 import 'package:todo_master/screens/auth/forgot_password.dart';
+import 'package:todo_master/utils/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -16,12 +17,13 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formSignInKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool rememberPassword = true;  // Default to true
-  bool _obscurePassword = true;   // State for password visibility
+  bool rememberPassword = true;
+  bool _obscurePassword = true;
+  bool _isLoading = false;
 
   String? _emailError;
   String? _passwordError;
-  String? _loginErrorMessage;    // Added for showing login errors
+  String? _loginErrorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -106,13 +108,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderSide: const BorderSide(
                               color: Colors.black12, // Default border color
                             ),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(50),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide: const BorderSide(
                               color: Colors.black12, // Default border color
                             ),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(50),
                           ),
                         ),
                       ),
@@ -147,13 +149,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderSide: const BorderSide(
                               color: Colors.black12, // Default border color
                             ),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(50),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide: const BorderSide(
                               color: Colors.black12, // Default border color
                             ),
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(50),
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
@@ -226,69 +228,109 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(
                         height: 25.0,
                       ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            setState(() {
-                              _loginErrorMessage = null; // Clear previous login error
-                            });
+                      if (_isLoading)
+                        SpinKitFadingCircle(
+                          color: lightColorScheme.primary,
+                          size: 50.0,
+                        )
+                      else
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: _isLoading
+                                ? null
+                                : () async {
+                                    setState(() {
+                                      _loginErrorMessage = null; // Clear previous login error
+                                    });
 
-                            if (_formSignInKey.currentState!.validate()) {
-                              if (!rememberPassword) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Please agree to the processing of personal data'),
-                                  ),
-                                );
-                                return;
-                              }
+                                    if (_formSignInKey.currentState!.validate()) {
+                                      if (!rememberPassword) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text('Please agree to the processing of personal data'),
+                                          ),
+                                        );
+                                        return;
+                                      }
 
-                              try {
-                                Map<String, dynamic>? response = await ApiService.loginUser(
-                                  _emailController.text,
-                                  _passwordController.text,
-                                );
+                                      setState(() {
+                                        _isLoading = true; // Show loading indicator
+                                      });
 
-                                String accessToken = response['tokens']['access_token'];
-                                String refreshToken = response['tokens']['refresh_token'];
-                                String userId = response['user_data']['id'].toString();
-                                String username = response['user_data']['username'];
-                                String email = response['user_data']['email'];
+                                      try {
+                                        Map<String, dynamic>? response = await ApiService.loginUser(
+                                          _emailController.text,
+                                          _passwordController.text,
+                                        );
 
-                                // Save tokens to local storage
-                                await saveTokens(accessToken, refreshToken, userId, username, email);
+                                        if (response != null) {
+                                          String accessToken = response['tokens']['access_token'];
+                                          String refreshToken = response['tokens']['refresh_token'];
+                                          String userId = response['user_data']['id'].toString();
+                                          String username = response['user_data']['username'];
+                                          String email = response['user_data']['email'];
 
-                                // Navigate to the home screen
-                                Navigator.pushReplacementNamed(context, '/todo-list');
-                                                            } catch (e) {
-                                setState(() {
-                                  _loginErrorMessage = 'Login failed. Please try again.';
-                                });
-                                print('Error during login: $e'); // Log the error
-                              }
-                            }
-                          },
-                          child: const Text('Sign in'),
+                                          await SharedPreferencesUtil.saveTokens(
+                                            accessToken,
+                                            refreshToken,
+                                            userId,
+                                            username,
+                                            email,
+                                          );
+
+                                          Navigator.pushReplacementNamed(context, '/todo-list');
+                                        }
+                                      } catch (error) {
+                                        if (error.toString().contains('Network error')) {
+                                          setState(() {
+                                            _loginErrorMessage = error.toString().replaceAll('Exception:', '').trim();
+                                          });
+                                        } else {
+                                          setState(() {
+                                            _loginErrorMessage = error.toString().replaceAll('Exception:', '').trim();
+                                          });
+                                        }
+                                      } finally {
+                                        setState(() {
+                                          _isLoading = false; // Hide loading indicator
+                                        });
+                                      }
+                                    }
+                                  },
+                            style: ButtonStyle(
+                              padding: MaterialStateProperty.all<EdgeInsets>(
+                                const EdgeInsets.symmetric(vertical: 15.0),
+                              ),
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50), // Match the Sign Up button's border radius
+                                ),
+                              ),
+                            ),
+                            child: const Text(
+                              'Sign In',
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blue,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
                       const SizedBox(
                         height: 25.0,
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Expanded(
+                          const Expanded(
                             child: Divider(
                               thickness: 0.7,
-                              color: Colors.grey.withOpacity(0.5),
+                              color: Colors.grey,
                             ),
                           ),
                           const Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 0,
-                              horizontal: 10,
-                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 10),
                             child: Text(
                               'Sign in with',
                               style: TextStyle(
@@ -296,17 +338,15 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ),
-                          Expanded(
+                          const Expanded(
                             child: Divider(
                               thickness: 0.7,
-                              color: Colors.grey.withOpacity(0.5),
+                              color: Colors.grey,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(
-                        height: 25.0,
-                      ),
+                      const SizedBox(height: 25.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -316,17 +356,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           Logo(Logos.github),
                         ],
                       ),
-                      const SizedBox(
-                        height: 25.0,
-                      ),
+                      const SizedBox(height: 25.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Text(
                             'Don\'t have an account? ',
-                            style: TextStyle(
-                              color: Colors.black45,
-                            ),
+                            style: TextStyle(color: Colors.black45),
                           ),
                           GestureDetector(
                             onTap: () {
@@ -347,9 +383,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
+                      const SizedBox(height: 20.0),
                     ],
                   ),
                 ),
@@ -359,15 +393,5 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       ),
     );
-  }
-
-  Future<void> saveTokens(String accessToken, String refreshToken,
-      String userId, String username, String email) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('access_token', accessToken);
-    await prefs.setString('refresh_token', refreshToken);
-    await prefs.setString('user_id', userId);
-    await prefs.setString('username', username);
-    await prefs.setString('email', email);
   }
 }

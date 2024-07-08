@@ -20,8 +20,10 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
   late TextEditingController _fullNameController;
   late TextEditingController _usernameController;
   late TextEditingController _emailController;
-  File? _avatarFile; // File to hold the picked image
-  int _currentIndex = 1; // Set to 1 for Profile
+  late TextEditingController _phoneController;  // New controller
+  late TextEditingController _countryController;  // New controller
+  File? _avatarFile;
+  int _currentIndex = 1;
 
   @override
   void initState() {
@@ -29,6 +31,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     _fullNameController = TextEditingController(text: widget.user.fullName ?? '');
     _usernameController = TextEditingController(text: widget.user.username);
     _emailController = TextEditingController(text: widget.user.email);
+    _phoneController = TextEditingController(text: widget.user.phone ?? '');  // Initialize new controller
+    _countryController = TextEditingController(text: widget.user.country ?? '');  // Initialize new controller
   }
 
   @override
@@ -36,6 +40,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     _fullNameController.dispose();
     _usernameController.dispose();
     _emailController.dispose();
+    _phoneController.dispose();  // Dispose of the new controller
+    _countryController.dispose();  // Dispose of the new controller
     super.dispose();
   }
 
@@ -54,22 +60,29 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     if (_formKey.currentState!.validate()) {
       User updatedUser = User(
         id: widget.user.id,
+        username: widget.user.username,
         fullName: _fullNameController.text.isNotEmpty ? _fullNameController.text : null,
-        username: _usernameController.text,
         email: _emailController.text,
         avatar: widget.user.avatar,
+        phone: _phoneController.text,  // Add phone
+        country: _countryController.text,  // Add country
       );
 
-      bool success = await ApiService.updateUserProfile(updatedUser, _avatarFile);
-
-      if (success) {
+      try {
+        await ApiService.updateUserProfile(updatedUser, _avatarFile);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Profile updated successfully')),
+          SnackBar(
+            content: Text('Profile updated successfully'),
+            backgroundColor: Colors.blue,
+          ),
         );
-        Navigator.pop(context, updatedUser);
-      } else {
+        Navigator.pop(context, updatedUser);  // Return the updated user
+      } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update profile')),
+          SnackBar(
+            content: Text('Failed to update profile: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
@@ -214,6 +227,38 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                       },
                     ),
                     SizedBox(height: 30),
+                    TextFormField(
+                      controller: _phoneController, 
+                      decoration: InputDecoration(
+                        labelText: 'Phone',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                      ),
+                      validator: (value) {
+                        // if (value == null || value.isEmpty) {
+                        //   return 'Please enter your phone number';
+                        // }
+                        // return null;
+                      },
+                    ),
+                    SizedBox(height: 30),
+                    TextFormField(
+                      controller: _countryController,
+                      decoration: InputDecoration(
+                        labelText: 'Country',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                      ),
+                      validator: (value) {
+                        // if (value == null || value.isEmpty) {
+                        //   return 'Please enter your country';
+                        // }
+                        // return null;
+                      },
+                    ),
+                    SizedBox(height: 30),
                     Container(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -239,10 +284,14 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        onTap: _onTabTapped,
+        onTap: (index) {
+          if (index != 0) {  // Prevent navigation if index is 0 (Tasks)
+            _onTabTapped(index);
+          }
+        },
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.list),
+            icon: Icon(Icons.list, color: Colors.grey),  // Change color to indicate deactivation
             label: 'Tasks',
           ),
           BottomNavigationBarItem(

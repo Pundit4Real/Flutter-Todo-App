@@ -17,6 +17,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   final _resetCodeController = TextEditingController();
   final _newPasswordController = TextEditingController();
   bool _isLoading = false; // Track the loading state
+  String? _resetPasswordErrorMessage; // Added for showing reset password errors
 
   @override
   void dispose() {
@@ -129,6 +130,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           return null;
                         },
                       ),
+                      if (_resetPasswordErrorMessage != null) ...[
+                        const SizedBox(height: 10),
+                        Text(
+                          _resetPasswordErrorMessage!,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                       const SizedBox(
                         height: 40.0,
                       ),
@@ -141,7 +153,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 _isLoading = true; // Set loading state to true
                               });
 
-                              bool success = await ApiService.resetPassword(
+                              var response = await ApiService.resetPassword(
                                 widget.email,
                                 _resetCodeController.text,
                                 _newPasswordController.text,
@@ -151,7 +163,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                 _isLoading = false; // Set loading state to false
                               });
 
-                              if (success) {
+                              if (response['success']) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('Password reset successfully'),
@@ -164,9 +176,12 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                                   (route) => false,  // Clear the navigation stack
                                 );
                               } else {
+                                setState(() {
+                                  _resetPasswordErrorMessage = response['error'];
+                                });
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Password reset failed'),
+                                  SnackBar(
+                                    content: Text(response['error'] ?? 'Password reset failed'),
                                     backgroundColor: Colors.red,
                                   ),
                                 );
