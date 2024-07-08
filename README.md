@@ -73,6 +73,7 @@ A simple Todo application built with Flutter that integrates with a Django backe
 - **Auth URLs**:
   - `POST /auth/register/`: Register a new user
   - `POST /auth/verify-email/`: Verify user email
+  - `POST /auth/resend-v-email/`
   - `POST /auth/login/`: User login
   - `POST /auth/change-password/`: Change user password
   - `POST /auth/forgot-password/`: Send password reset email
@@ -88,6 +89,9 @@ A simple Todo application built with Flutter that integrates with a Django backe
   - `GET /todo/tasks/{id}/`: Retrieve a task
   - `PUT /api/tasks/{id}/`: Update a task
   - `DELETE /todo/tasks/{id}/delete`: Delete a task
+
+  - **Feedback Endpoint**:
+  - `POST /todo/send-feedback/`
 
 ## Architectural Considerations
 
@@ -147,10 +151,10 @@ A simple Todo application built with Flutter that integrates with a Django backe
 ![welcome Screen](ui/welcome.jpg)
 
 #### logIn Screen
-![login Screen](ui/signIn.jpg)
+![login Screen](ui/login.jpg)
 
 #### SignUp Screen
-![signUp Screen](ui/signUp.jpg)
+![signUp Screen](ui/sign-up.jpg)
 
 #### Forgot-Password Screen
 ![forgot-password Screen](ui/forgot-password.jpg)
@@ -162,16 +166,23 @@ A simple Todo application built with Flutter that integrates with a Django backe
 ![profile Screen](ui/profile.jpg)
 
 #### Profile-edit Screen
-![profile-edit Screen](ui/profile-update.jpg)
+![profile-edit Screen](ui/edit-profile.jpg)
+
+#### Feedback Screen
+![Feedback Screen](ui/feedback.jpg)
 
 #### Change-Password Screen
 ![reset-password Screen](ui/change-password.jpg)
 
 #### Todo-List Screen
-![Todo-list Screen](ui/list-task.jpg)
+![Todo-list Screen](ui/todo-list.jpg)
+
+#### Create-Todo Screen
+![create-todo Screen](ui/create-todo.jpg)
 
 #### Todo-Detail Screen
-![todo-detail Screen](ui/task-detail.jpg)
+![todo-detail Screen](ui/todo-details.jpg)
+
 
 #### Update-Todo Screen
 ![update-task Screen](ui/update-task.jpg)
