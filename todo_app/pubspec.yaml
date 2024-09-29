@@ -25,13 +25,14 @@ dev_dependencies:
 
   # flutter_test: any
   # todo_master: any
+  flutter_test: any
 flutter_launcher_icons:
   android: true
   ios: true
   image_path: assets/icons/logo.jpg
 
   flutter_test:
-    sdk: flutter
+    sdk: flutter   
   flutter_lints: ^4.0.0
   get:
 

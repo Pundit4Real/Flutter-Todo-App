@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 
 class ApiService {
-  static const String baseUrl = "https://todo4mpedigree.pythonanywhere.com/";
+  static const String baseUrl = "https://todo44mpedigree.pythonanywhere.com/";
 
   // User registration
 static Future<Map<String, dynamic>> registerUser(User user) async {

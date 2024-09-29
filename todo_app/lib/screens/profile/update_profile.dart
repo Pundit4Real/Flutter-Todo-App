@@ -236,6 +236,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         ),
                       ),
                       validator: (value) {
+                        return null;
+                      
                         // if (value == null || value.isEmpty) {
                         //   return 'Please enter your phone number';
                         // }
@@ -252,6 +254,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                         ),
                       ),
                       validator: (value) {
+                        return null;
+                      
                         // if (value == null || value.isEmpty) {
                         //   return 'Please enter your country';
                         // }

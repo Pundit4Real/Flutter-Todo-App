@@ -264,24 +264,22 @@ class _LoginScreenState extends State<LoginScreen> {
                                           _passwordController.text,
                                         );
 
-                                        if (response != null) {
-                                          String accessToken = response['tokens']['access_token'];
-                                          String refreshToken = response['tokens']['refresh_token'];
-                                          String userId = response['user_data']['id'].toString();
-                                          String username = response['user_data']['username'];
-                                          String email = response['user_data']['email'];
+                                        String accessToken = response['tokens']['access_token'];
+                                        String refreshToken = response['tokens']['refresh_token'];
+                                        String userId = response['user_data']['id'].toString();
+                                        String username = response['user_data']['username'];
+                                        String email = response['user_data']['email'];
 
-                                          await SharedPreferencesUtil.saveTokens(
-                                            accessToken,
-                                            refreshToken,
-                                            userId,
-                                            username,
-                                            email,
-                                          );
+                                        await SharedPreferencesUtil.saveTokens(
+                                          accessToken,
+                                          refreshToken,
+                                          userId,
+                                          username,
+                                          email,
+                                        );
 
-                                          Navigator.pushReplacementNamed(context, '/todo-list');
-                                        }
-                                      } catch (error) {
+                                        Navigator.pushReplacementNamed(context, '/todo-list');
+                                                                            } catch (error) {
                                         if (error.toString().contains('Network error')) {
                                           setState(() {
                                             _loginErrorMessage = error.toString().replaceAll('Exception:', '').trim();
