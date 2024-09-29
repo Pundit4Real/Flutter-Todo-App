@@ -319,15 +319,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(
                         height: 25.0,
                       ),
-                      Row(
+                      const Row(
                         children: [
-                          const Expanded(
+                          Expanded(
                             child: Divider(
                               thickness: 0.7,
                               color: Colors.grey,
                             ),
                           ),
-                          const Padding(
+                          Padding(
                             padding: EdgeInsets.symmetric(horizontal: 10),
                             child: Text(
                               'Sign in with',
@@ -336,7 +336,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ),
-                          const Expanded(
+                          Expanded(
                             child: Divider(
                               thickness: 0.7,
                               color: Colors.grey,

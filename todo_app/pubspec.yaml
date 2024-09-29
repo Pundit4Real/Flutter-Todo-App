@@ -1,6 +1,6 @@
 name: todo_master
-description: "A  new app for managing todos effectively."
-publish_to: 'none' 
+description: "A new app for managing todos effectively."
+publish_to: 'none'
 
 version: 1.0.0+1
 
@@ -11,7 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   provider: ^6.0.3
-  http: ^1.2.1 
+  http: ^1.2.1
   image_picker: ^1.1.2
   shared_preferences: ^2.0.6
   flutter_secure_storage: ^9.2.2
@@ -19,27 +19,20 @@ dependencies:
   cupertino_icons: ^1.0.6
   icons_plus: ^4.0.0
   flutter_spinkit: ^5.2.1
-  
-dev_dependencies:
-  flutter_launcher_icons: "^0.13.1"
 
-  # flutter_test: any
-  # todo_master: any
-  flutter_test: any
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: "^0.13.1"
+  flutter_lints: ^4.0.0
+
 flutter_launcher_icons:
   android: true
   ios: true
   image_path: assets/icons/logo.jpg
-
-  flutter_test:
-    sdk: flutter   
-  flutter_lints: ^4.0.0
-  get:
 
 flutter:
   uses-material-design: true
   assets:
     - assets/images/bg1.png
     - assets/images/bg10.jpeg
-
-
