@@ -52,13 +52,12 @@ android {
         }
     }
 
-    signingConfigs {
+        signingConfigs {
         release {
             keyAlias 'todomaster-key-alias'
-            keyPassword 'pundit@2035P#'
-            storeFile file('todomaster-release-key.keystore')
-            storePassword 'pundit@2035P#' // Ensure this matches your actual store password
-            storeType 'pkcs12'  // Use 'pkcs12' for modern keystore formats
+            keyPassword 'pundit'
+            storeFile file('D:/Flutter/Flutter-Todo-App/todo_app/android/app/todomaster-release-key.keystore')
+            storePassword 'pundit'
         }
     }
 

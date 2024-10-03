@@ -65,7 +65,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   color: lightColorScheme.primary,
                                 ),
                               ),
-                              TextSpan(
+                              const TextSpan(
                                 text: 'Sign up to create your TodoMaster account and begin your path to success.',
                                 style: TextStyle(
                                   fontSize: 16.0,  // Adjusted for better fit
