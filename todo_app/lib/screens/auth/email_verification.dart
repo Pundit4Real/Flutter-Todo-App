@@ -149,7 +149,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                     backgroundColor: Colors.blue,
                                   ),
                                 );
-                                Navigator.pushNamed(context, '/todo-list');
+                                Navigator.pushNamed(context, '/login');
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
